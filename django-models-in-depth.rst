@@ -44,120 +44,113 @@ The model creation consists of four steps:
 Lets look again at the model definition we created earlier, but with some extra
 comments::
 
-```
-# Our base class
-from django.db import models
-# import GeoDjango stuff to support spatial data types
-from django.contrib.gis.db import models
-# Use python time goodies
-import datetime
+  # Our base class
+  from django.db import models
+  # import GeoDjango stuff to support spatial data types
+  from django.contrib.gis.db import models
+  # Use python time goodies
+  import datetime
 
-# A class defines our model if it inherits from models.model
-class Doodle(models.Model):
-  # Create a name field
-  name = models.CharField(max_length=255)
-  # And a geometry field for our doodle
-  doodle = models.LineStringField(srid=4326,null=True, blank=True)
-  # Lastly make an auto populated date field
-  doodle_date = models.DateTimeField('DateAdded', 
-                auto_now=True, auto_now_add=False)
-  # Model manager that must be added to any model with a geometry
-  objects = models.GeoManager()
+  # A class defines our model if it inherits from models.model
+  class Doodle(models.Model):
+    # Create a name field
+    name = models.CharField(max_length=255)
+    # And a geometry field for our doodle
+    doodle = models.LineStringField(srid=4326,null=True, blank=True)
+    # Lastly make an auto populated date field
+    doodle_date = models.DateTimeField('DateAdded', 
+                  auto_now=True, auto_now_add=False)
+    # Model manager that must be added to any model with a geometry
+    objects = models.GeoManager()
 
-  # Metadata inner class
-  class Meta:
-    # Name the table should be given on the database backend (optional)
-    db_table = 'doodle'
-    # Name to be used in the user interface (generated web pages) for this model
-    verbose_name = ('Fantastic Doodle')
-    # Plural name to be used in the user interface
-    verbose_name_plural = ('Fantastic Doodles')
-    # Column ordering to be used by default if a collection of model instances is
-    # obtained.
-    ordering = ('doodle_date','name',)
+    # Metadata inner class
+    class Meta:
+      # Name the table should be given on the database backend (optional)
+      db_table = 'doodle'
+      # Name to be used in the user interface (generated web pages) for this model
+      verbose_name = ('Fantastic Doodle')
+      # Plural name to be used in the user interface
+      verbose_name_plural = ('Fantastic Doodles')
+      # Column ordering to be used by default if a collection of model instances is
+      # obtained.
+      ordering = ('doodle_date','name',)
 
-```
 
-== Field Types ==
+Field Types
+-----------
 
-[Django field documentation http://docs.djangoproject.com/en/dev/ref/models/fields/]
-
+The different types of field that you can use in django models are described in
+the `Django
+documentation<http://docs.djangoproject.com/en/dev/ref/models/fields/>`_.
 There are a number of different field types you can use, including special
 types that will build foriegn key constraints, multikey join tables, lookup
 lists and so on. Here is a complete list of allowed types:
 
 Standard field types:
 
-```
-AutoField
-BooleanField
-CharField
-CommaSeparatedIntegerField
-DateField
-DateTimeField
-DecimalField
-EmailField
-FileField
-FilePathField
-FloatField
-ImageField
-IntegerField
-IPAddressField
-NullBooleanField
-PositiveIntegerField
-PositiveSmallIntegerField
-SlugField
-SmallIntegerField
-TextField
-TimeField
-URLField
-XMLField
-```
+* AutoField
+* BooleanField
+* CharField
+* CommaSeparatedIntegerField
+* DateField
+* DateTimeField
+* DecimalField
+* EmailField
+* FileField
+* FilePathField
+* FloatField
+* ImageField
+* IntegerField
+* IPAddressField
+* NullBooleanField
+* PositiveIntegerField
+* PositiveSmallIntegerField
+* SlugField
+* SmallIntegerField
+* TextField
+* TimeField
+* URLField
+* XMLField
 
 Relationship fields:
 
-```
-ForeignKey
-ManyToManyField
-OneToOneField
-```
+* ForeignKey
+* ManyToManyField
+* OneToOneField
 
 Spatial field types:
 
-```
-PointField
-LineStringField
-PolygonField
-MultiPointField
-MultiLineStringField
-MultiPolygonField
-GeometryCollectionField
-```
+* PointField
+* LineStringField
+* PolygonField
+* MultiPointField
+* MultiLineStringField
+* MultiPolygonField
+* GeometryCollectionField
 
-== Verbose Names ==
+Verbose Names
+--------------
 
-You can use verbose_name to give the model field a more friendly name that will
-be shown on forms etc. **Note:** for foreign key and other relationship fields,
-you must place the verbose name **after** the relation name. e.g.
+You can use :keyword:`verbose_name` to give the model field a more friendly name that will
+be shown on forms etc. 
 
-```
-status = models.ForeignKey(Status,verbose_name="Order Status")
-```
+.. note:: For foreign key and other relationship fields, you must place the
+  verbose name **after** the relation name. e.g::
 
-== Choices ==
+    status = models.ForeignKey(Status,verbose_name="Order Status")
+
+
+Choices
+-------
 
 If you want to restrict the values that a user can choose from in order to
-populate the field. You can do this using a list e.g.:
+populate the field. You can do this using a list e.g.::
+  
+  myChoices = (("a" , "Pothole"), ("b" , "Road Sign"), ("c" , "Vagrants"))
 
-```
-myChoices = (("a" , "Pothole"), ("b" , "Road Sign"), ("c" , "Vagrants"))
-```
-
-Then when you create your field you would do:
-
-```
-name = models.CharField(max_length=255,choices=myChoices)
-```
+Then when you create your field you would do::
+  
+  name = models.CharField(max_length=255,choices=myChoices)
 
 If you open the doodle model in the admin web interface, you should see that
 the text field for name is now replaced with a combo with the items listed in
@@ -169,105 +162,185 @@ the choices list will never change, you could use it. Let me show you how we
 would rather implement the choice using a second model and a relationship
 field.
 
-== Relationship fields ==
+Relationship fields
+-------------------
+
+Relationship fields are used to express foreign key joins - you can have
+one-to-many, many-to-many etc. type relationships. The underlying 'plumbing' of
+these relationships is built for you in the backend database by Django.
 
 First delete the myChoices... line we created above. Next add a new class to
-models.py (put it before the doodle class) that looks like this:
+models.py (put it before the doodle class) that looks like this::
+  
+  class DoodleType(models.Model):
+      name = models.CharField(max_length=255)
+      objects = models.Manager()
 
+      def __unicode__(self):
+          return self.name
 
-```
-class DoodleType(models.Model):
-  name = models.CharField(max_length=255)
-  objects = models.Manager()
+      class Meta:
+          db_table = 'doodletype'
+          verbose_name = ('Doodle Type')
+          verbose_name_plural = ('Doodle Types')
+          ordering = ('name',)
 
-  def __unicode__(self):
-    return self.name
+.. note:: This is a good use case for using :file:`initial_data.json` fixtures -
+   when you want to be sure that the application or test environment is always
+   initialised with your lookup lists populated.
 
+Next, change the :keyword:`Doodle.name` field from a charfield to one that
+looks like this::
+   
+   name = models.CharField(max_length=255)
 
-  class Meta:
-    db_table = 'doodletype'
-    verbose_name = ('Doodle Type')
-    verbose_name_plural = ('Doodle Types')
-    ordering = ('name',)
+And add Doodle.type like this::
+   
+   type = models.ForeignKey(DoodleType)
 
-```
+.. note:: If you want to, you can specify a default value across the ForeignKey
+   relate by doing e.g.::
+      
+      doodle_type = models.ForeignKey(DoodleType, default=DoodleType.objects.get(id=1))
 
-Next, change the doodle.name field from a charfield to one that looks like this:
-
-```
-  name = models.CharField(max_length=255)
-```
-
-And add doodle.type like this:
-
-```
-  type = models.ForeignKey(DoodleType)
-```
-
-''Note:'' if you want to, you can specify a default value across the ForeignKey relate by doing e.g.
-
-```
-doodle_type = models.ForeignKey(DoodleType, default=DoodleType.objects.get(id=1))
-```
-
-(which uses the first instance of doodle type as the default value).
+   (which uses the first instance of doodle type as the default value).
 
 To register the changes in our models, you need to run syncdb again. However we
-have changed an existing model's field type (Doodle.name) which means that
-model's table definition also needs to be synced to the database. Before we can
-do that we need to drop its table. We will discuss later how to deal with data
-that may be in a table if you need to replace it with one that contains
-existing functionality:
+have changed an existing model's field type (:keyword:`Doodle.name`) which
+means that model's table definition also needs to be synced to the database.
+Before we can do that we need to drop its table. We will discuss later how to
+deal with data that may be in a table if you need to replace it with one that
+contains existing functionality. For sqlite, just use the sqliteman application
+to select the table then delete it. 
 
-```
-echo "drop table doodle;" > psql django_project
-python manage.py syncdb
-```
+.. image:: img/image007.png
 
-or
+If you are using postgresql as a backend you can do::
+   
+  echo "drop table doodle;" > psql django_project
+  python manage.py syncdb
 
-```
-python manage.py sqlreset doodle | psql django_project
-```
+  or
 
-Finally to test, we need to add a new entry to doodle/admin.py...:
+  python manage.py sqlreset doodle_app | psql django_project
 
-```
-from django.contrib.gis import admin
-from models import *
+To manage the new model, we need to add a new entry to
+:file:`doodle_app/admin.py`::
+   
+  from models import DoodleType
 
-class DoodleTypeAdmin(admin.ModelAdmin):
-  list_display = ('name',) 
+  class DoodleTypeAdmin(admin.ModelAdmin):
+      list_display = ('name',) 
 
-class DoodleAdmin(admin.GeoModelAdmin):
-  field = (None, {'fields': ('name')})
-  field = (None, {'fields': ('doodle')})
-  field = (None, {'fields': ('doodle_date')})
-  list_display = ('name', 'doodle_date', 'doodle') 
-  list_filter = ('name', 'doodle_date')
+  admin.site.register(DoodleType, DoodleTypeAdmin)
 
-#Register each model with its associated admin class
-admin.site.register(DoodleType, DoodleTypeAdmin)
-admin.site.register(Doodle, DoodleAdmin)
-```
+If you go back to your doodle admin interface now it should look something like
+this:
 
-Registering the DoodleType model in the admin interface is much simpler since
-it does not contain any geometry fields. Django only needs the line 
+.. image:: img/image008.png
 
-```
-admin.site.register(DoodleType, DoodleTypeAdmin)
-```
+.. image:: img/image009.png
 
-added to admin.py and it will do all the rest. If you go back to your doodle
-admin interface now it should look something like this:
-
-[img/doodleadmin.png]
 
 You will notice there is now a little + icon next to the Name field. If you
 click on it, the admin interface will pop up a form where you can manage the
 list of names in the DoodleType model.
 
-== One last thing ==
+
+Unit Testing
+------------
+
+Whenever we add a new feature like this (changing models, adding new models),
+we should run our tests and update them if needed or address the causes of
+failures. Let's see what happens when we run our tests with the above changes::
+
+  $ python manage.py test doodle_app
+  Creating test database for alias 'default'...
+  Problem installing fixture '/home/web/django-training/django_project/doodle_app/fixtures/test_data.json': Traceback (most recent call last):
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/core/management/commands/loaddata.py", line 196, in handle
+  obj.save(using=using)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/core/serializers/base.py", line 165, in save
+  models.Model.save_base(self.object, using=using, raw=True)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 529, in save_base
+  rows = manager.using(using).filter(pk=pk_val)._update(values)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/query.py", line 557, in _update
+  return query.get_compiler(self.db).execute_sql(None)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 986, in execute_sql
+  cursor = super(SQLUpdateCompiler, self).execute_sql(result_type)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 818, in execute_sql
+  cursor.execute(sql, params)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 337, in execute
+  return Database.Cursor.execute(self, query, params)
+  IntegrityError: Could not load contenttypes.ContentType(pk=7): columns app_label, model are not unique
+  E
+  ======================================================================
+  ERROR: testCreation (doodle_app.tests.DoodleTest)
+  Test Doodle creation
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+  File "/home/web/django-training/django_project/doodle_app/tests.py", line 13, in testCreation
+  myDoodle.save()
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 463, in save
+  self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 551, in save_base
+  result = manager._insert([self], fields=fields, return_id=update_pk, using=using, raw=raw)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/manager.py", line 203, in _insert
+  return insert_query(self.model, objs, fields, **kwargs)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/query.py", line 1576, in insert_query
+  return query.get_compiler(using=using).execute_sql(return_id)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 910, in execute_sql
+  cursor.execute(sql, params)
+  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 337, in execute
+  return Database.Cursor.execute(self, query, params)
+  IntegrityError: doodle_app_doodle.doodle_type_id may not be NULL
+  ----------------------------------------------------------------------
+  1 test in 0.008s
+  FAILED (errors=1)
+  Destroying test database for alias 'default'...
+
+
+You can see our test has immediately informed us that our changes have broken
+our application! This is useful because we get to fix it instead of perhaps
+finding out after the changes have been deployed into production.
+
+The critical error meessage above is this::
+   
+   IntegrityError: doodle_app_doodle.doodle_type_id may not be NULL
+
+This is actually good news - it is Django refusing to load the Doodles from the
+fixture because they don't have valid related DoodleTypes. To address this we will do the following:
+
+* Create some doodle type entries in the admin interface
+* Generate fixtures for :file:`initial_data.json` that will populate the
+  DoodleType model with a few entries.
+* Update our test fixtures for Doodle
+* Rerun the tests and check that they pass.
+
+Here is how I created the initial_data.json fixture after adding some
+DoodleType's in the admin interface::
+   
+  python manage.py dumpdata doodle_app.DoodleType > doodle_app/fixtures/initial_data.json 
+
+Then I updated my test fixture (:file:`doodle_app/fixtures/test_data.json`),
+assigning a foreign key reference for all of the Doodle records e.g.::
+   
+   
+
+
+.. note:: There are various strategies to deal with changes to the underlying
+   models in django. Here are the three that I make use of:
+
+   + Drop the data in the modified table, drop the table and rerun syncdb. This
+     is useful when you don't care about the existing data.
+   + Use sql to manually change the underlying database to keep it in sync with
+     your models.
+   + Use a tool like `South <http://south.aeracode.org/>`_ to automate migrations.
+
+   Wherever possible, I make use of South, but in the interests of simplicity I am
+   not covering it here.
+
+One last thing
+--------------
 
 If you were alert, you might have wondered what is to prevent the same
 DoodleType name being added twice. In fact django automatically added a unique
