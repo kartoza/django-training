@@ -9,27 +9,17 @@ supported and more are on the way. Lets create our first project::
    source python/bin/activate
    django-admin.py startproject django_project
    cd django_project/
-   createdb django_project
-   createlang plpgsql django_project
-   psql django_project < /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
-   psql django_project < /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
 
-.. note:: If you are using a different version of postgresql those last two
-   lines should be adjusted accordingly.
+.. note::  A project name can only use numbers, letters and underscores.
 
 
-Setup your Database connection
-------------------------------
+Configure your project
+----------------------
 
 At this point you should fill in the database connection settings (in settings.py)::
 
-   # Note delete django.db.backends.
-   DATABASE_ENGINE = 'postgresql_psycopg2'
-   DATABASE_NAME = 'django_project'
-   DATABASE_USER = 'foouser'
-   DATABASE_PASSWORD = 'foopassword'
-   DATABASE_HOST = 'localhost'
-   DATABASE_PORT = '5432'
+  'ENGINE': 'django.db.backends.sqlite3', 
+  'NAME': 'django',                      
 
 Also set the time zone::
    
@@ -62,14 +52,19 @@ Lets take another look at our directory structure now::
 
    django-training
    |-- django_project
-   |   |-- __init__.py
-   |   |-- manage.py
-   |   |-- settings.py
-   |   `-- urls.py
+   |-- | django_project
+   |     |-- __init__.py
+   |     |-- settings.py
+   |     `-- urls.py
+   |-- | manage.py
    `-- python
        |-- bin
        |-- include
        `-- lib
+
+
+.. note:: Before version 1.4 of django the project was a flat directory. As 
+   of 1.4 it contains an internal directory by the same name for settings etc.
 
 As you can see from the above diagram, django has created a basic project 
 framework for us under the directory entitled 'django_project'.
@@ -83,24 +78,24 @@ detail just now). First we will create a simple application.
 
 First kill the server by pressing :kbd:`ctrl-c` and then do::
 
-   cd /home/web/django/django_project/
-   python manage.py startapp doodle-app
+   cd /home/web/django-training/django_project/
+   python manage.py startapp doodle_app
 
-Doing that creates a new directory under our project called doodle-app::
+Doing that creates a new directory under our project called doodle_app::
 
    django
    |-- django_project
-   |   |-- doodle-app
+   |   |-- doodle_app
    |   |   |-- __init__.py
    |   |   |-- models.py
    |   |   |-- tests.py
    |   |   `-- views.py
+   |-- |-- django_project
+   |     |-- __init__.py
+   |     |-- settings.py
+   |     `-- urls.py
    |   |-- __init__.py
-   |   |-- __init__.pyc
    |   |-- manage.py
-   |   |-- settings.py
-   |   |-- settings.pyc
-   |   `-- urls.py
    `-- python
        |-- bin
        |   |-- activate
@@ -113,8 +108,54 @@ files into our directory tree:
 * **models.py** - where we define our models
 * **views.py** - where we define our views
 
-Where is the controller? **urls.py** in the top level project dir is our
+Where is the controller? **urls.py** in the top level project dir is our default
 controller - it decodes urls and sends requests on to the correct view class.
+
+Before we can use our application, we need to register it with settings.py and 
+run 'syncdb' which synchronises our application settings to the django database.
+
+To register the new application, edit :file:`django_project\django_project\settings.py` and add it to the bottom of the list of INSTALLED_APPS::
+  
+  INSTALLED_APPS = ( 
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.sites',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+      # Uncomment the next line to enable the admin:
+      # 'django.contrib.admin',
+      # Uncomment the next line to enable admin documentation:
+      # 'django.contrib.admindocs',
+      'doodle_app',  # <-- new application added
+    )
+
+:command:`python manage.py syncdb`
+
+Which will produce something like this::
+
+   Creating tables ...
+   Creating table auth_permission
+   Creating table auth_group_permissions
+   Creating table auth_group
+   Creating table auth_user_user_permissions
+   Creating table auth_user_groups
+   Creating table auth_user
+   Creating table django_content_type
+   Creating table django_session
+   Creating table django_site
+   
+   You just installed Django's auth system, which means you don't have any superusers defined.
+   Would you like to create one now? (yes/no): yes
+   Username (leave blank to use 'timlinux'): 
+   E-mail address: tim@linfiniti.com
+   Password: 
+   Password (again): 
+   Superuser created successfully.
+   Installing custom SQL ...
+   Installing indexes ...
+   Installed 0 object(s) from 0 fixture(s)
+
 
 Now we have an application - we can visit it like this:
 
@@ -128,10 +169,8 @@ Make sure the test server is running first::
    a new shell session and or changed to a different directory in the meantime.
 
 
-Now point your browser at the app : http://localhost:8000/doodle-app/
+Now point your browser at the app : http://localhost:8000/doodle_app/
 
-You should see a basic placeholder message.
-
-Congratulations! You just made your first django app. In the lessons that
+You should see a basic placeholder message. In the lessons that
 follow we will customise the application in various ways and learn about django
 architecture in the process.
