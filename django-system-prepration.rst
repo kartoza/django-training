@@ -31,11 +31,11 @@ with something like this::
    |   `-- app2
    `-- python   <-- virtual environment for python
 
-Django divides your work into projects and applications. A ''project'' provides 
+Django divides your work into projects and applications. A **project** provides 
 shared templates, media (images, logos etc) to its applications and a shared
 user database and so on.
 
-An ''application'' provides some specific functionality. You can also install 
+An **application** provides some specific functionality. You can also install 
 third party applications under your project directory to provide things like 
 login frameworks etc.
 
@@ -45,14 +45,15 @@ lets get our python virtual environment set up...
 Creating the virtual environment
 --------------------------------
 
-To create your virtual environment, make sure you are in the 
+To create your virtual environment (and install a few other dependencies)  make
+sure you are in the 
 django directory we created above first and then do::
 
    sudo apt-get install python-setuptools build-essential python-dev libpq-dev
    sudo easy_install virtualenv
    virtualenv --no-site-packages python
    source python/bin/activate
-   easy_install pip
+   easy_install pip  <-- newer virtual env may do this automatically
           
 
 What have we just done? We have set up a virtual environment (think of it 
@@ -89,6 +90,9 @@ we will use later in this tutuorial.
 
 In case you are wondering, pip is a package management tool for python.
 
+.. tip:: You can view the pip installed package in your virtual environment by
+   doing :command:`pip freeze`
+
 Following the above steps, your directory structure should now look like this::
 
    django-training
@@ -115,7 +119,6 @@ enabled the python virtual environment::
 
    source python/bin/activate
 
-
 This sets up the system search path for python to look into your virtual env. 
 in preference over using the system libs under /usr/lib/python.
 
@@ -126,5 +129,5 @@ You don't need to use postgresql with django - it supports a variety of
 other databases. But its a good choice for a backend especially in light 
 of the support for spatial datasets via PostGIS, so lets install and use it::
    
-   sudo apt-get install postgresql-8.4-postgis
+   sudo apt-get install postgresql-9.1-postgis
 
