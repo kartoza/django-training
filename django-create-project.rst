@@ -19,7 +19,7 @@ Configure your project
 At this point you should fill in the database connection settings (in settings.py)::
 
   'ENGINE': 'django.db.backends.sqlite3', 
-  'NAME': 'django',                      
+  'NAME': 'django.db'
 
 Also set the time zone::
    

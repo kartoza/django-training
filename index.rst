@@ -14,6 +14,7 @@ Contents:
    django-overview
    django-system-prepration
    django-create-project
+   django-create-model
    setup-eclipse
 
 
