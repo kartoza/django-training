@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    django-overview
-   django-setup
+   django-system-prepration
+   django-first-project
 
 
 Indices and tables
