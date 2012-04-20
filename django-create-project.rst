@@ -11,8 +11,8 @@ supported and more are on the way. Lets create our first project::
    cd django_project/
    createdb django_project
    createlang plpgsql django_project
-   psql django_project < /usr/share/postgresql-8.3-postgis/lwpostgis.sql
-   psql django_project < /usr/share/postgresql-8.3-postgis/spatial_ref_sys.sql 
+   psql django_project < /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+   psql django_project < /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
 
 .. note:: If you are using a different version of postgresql those last two
    lines should be adjusted accordingly.

@@ -13,7 +13,7 @@ Contents:
 
    django-overview
    django-system-prepration
-   django-first-project
+   django-create-project
 
 
 Indices and tables
