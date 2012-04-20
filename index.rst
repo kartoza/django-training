@@ -15,6 +15,8 @@ Contents:
    django-system-prepration
    django-create-project
    django-create-model
+   django-fixtures
+   django-testing
    setup-eclipse
 
 
