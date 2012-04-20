@@ -324,8 +324,31 @@ DoodleType's in the admin interface::
 Then I updated my test fixture (:file:`doodle_app/fixtures/test_data.json`),
 assigning a foreign key reference for all of the Doodle records e.g.::
    
-   
+  {"pk": 1, "model": "doodle_app.doodle", "fields": {"name": "Tim Doodle", 
+  "doodle_date": "2012-04-20T10:44:25.247Z", "doodle_type" : 1}}, 
+  {"pk": 2, "model": "doodle_app.doodle", "fields": {"name": "foobar", 
+  "doodle_date": "2012-04-20T11:33:21.018Z", "doodle_type" : 1}}, 
+  {"pk": 3, "mode    l": "doodle_app.doodle", "fields": 
+  {"name": "digettydoo", "doodle_date": "2012-04-20T11:43:19.662Z", 
+  "doodle_type" : 1}}, 
 
+We also need to update our test for Doodle so that doodle_type gets initialised::
+
+    def testCreation(self):
+        """Test Doodle creation"""
+        myCount = Doodle.objects.all().count()
+        myDoodle = Doodle()
+        myDoodle.name = 'Test Doodle'
+        myDoodleType = DoodleType.objects.get(id=1)  # added
+        myDoodle.doodle_type = myDoodleType          # added
+        myDoodle.save()
+        for myDoodle in Doodle.objects.all():
+            print myDoodle.name
+        myMessage = 'Expected one more doodle after creation'
+        assert Doodle.objects.all().count() > myCount, myMessage
+
+The updated test tries to create a DoodleType instance and assign it to the
+Doodle instance before the Doodle is saved.
 
 .. note:: There are various strategies to deal with changes to the underlying
    models in django. Here are the three that I make use of:
