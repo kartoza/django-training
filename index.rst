@@ -17,6 +17,7 @@ Contents:
    django-create-model
    django-fixtures
    django-testing
+   django-admin-model
    setup-eclipse
 
 
