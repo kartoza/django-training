@@ -14,6 +14,7 @@ Contents:
    django-overview
    django-system-prepration
    django-create-project
+   setup-eclipse
 
 
 Indices and tables
