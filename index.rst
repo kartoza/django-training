@@ -20,6 +20,7 @@ Contents:
    django-admin-model
    django-models-in-depth
    setup-eclipse
+   django-views
 
 
 Indices and tables
