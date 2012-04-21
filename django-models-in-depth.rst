@@ -319,18 +319,41 @@ fixture because they don't have valid related DoodleTypes. To address this we wi
 Here is how I created the initial_data.json fixture after adding some
 DoodleType's in the admin interface::
    
-  python manage.py dumpdata doodle_app.DoodleType > doodle_app/fixtures/initial_data.json 
+  python manage.py dumpdata --indent=4 doodle_app.DoodleType > doodle_app/fixtures/initial_data.json 
 
 Then I updated my test fixture (:file:`doodle_app/fixtures/test_data.json`),
 assigning a foreign key reference for all of the Doodle records e.g.::
    
-  {"pk": 1, "model": "doodle_app.doodle", "fields": {"name": "Tim Doodle", 
-  "doodle_date": "2012-04-20T10:44:25.247Z", "doodle_type" : 1}}, 
-  {"pk": 2, "model": "doodle_app.doodle", "fields": {"name": "foobar", 
-  "doodle_date": "2012-04-20T11:33:21.018Z", "doodle_type" : 1}}, 
-  {"pk": 3, "mode    l": "doodle_app.doodle", "fields": 
-  {"name": "digettydoo", "doodle_date": "2012-04-20T11:43:19.662Z", 
-  "doodle_type" : 1}}, 
+  [
+      {
+          "pk": 1, 
+          "model": "doodle_app.doodle", 
+          "fields": {
+              "doodle_type": 1, 
+              "name": "Doodel 1", 
+              "doodle_date": "2012-04-21T12:38:31.789Z"
+          }
+      }, 
+      {
+          "pk": 2, 
+          "model": "doodle_app.doodle", 
+          "fields": {
+              "doodle_type": 2, 
+              "name": "Doodle 2", 
+              "doodle_date": "2012-04-21T12:38:38.894Z"
+          }
+      }, 
+      {
+          "pk": 3, 
+          "model": "doodle_app.doodle", 
+          "fields": {
+              "doodle_type": 3, 
+              "name": "Doodle 3", 
+              "doodle_date": "2012-04-21T12:38:49.862Z"
+          }
+      }
+  ]
+
 
 We also need to update our test for Doodle so that doodle_type gets initialised::
 
@@ -361,6 +384,33 @@ Doodle instance before the Doodle is saved.
 
    Wherever possible, I make use of South, but in the interests of simplicity I am
    not covering it here.
+
+Let's verify that our updated test runs now.::
+   
+  python manage.py test doodle_app
+  Creating test database for alias 'default'...
+  Doodel 1
+  Doodle 2
+  Doodle 3
+  Test Doodle
+  .
+  ----------------------------------------------------------------------
+  Ran 1 test in 0.009s
+
+  OK
+  Destroying test database for alias 'default'...
+
+I would like to empahasise the difference between :file:`initial_data.json` and
+:file:`test_data.json`:
+
+* :file:`initial_data.json` is a **production** fixtire. It is restored into
+  the database every time you run syncdb (and consequently it is also restored
+  when you run any test). It is useful for prepopulating the database with
+  lookup lists and perhaps user accounts. 
+* :file:`test_data.json` is a **test** fixture (you can name this whatever you
+  like and have multiple test fixtures to provide for different scenarios). You
+  reference one or more test fixtures in your unit test, effectively telling
+  your test class what test data should be used while running the tests.
 
 One last thing
 --------------

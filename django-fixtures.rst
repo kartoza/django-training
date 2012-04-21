@@ -18,14 +18,16 @@ and application specific fixture for doodle data data::
 
 Now dump the database data into json text files::
    
-   python manage.py dumpdata doodle_app  > doodle_app/fixtures/initial_data.json
+   python manage.py dumpdata --indent=4 doodle_app  > doodle_app/fixtures/initial_data.json
 
 .. note:: (1) You must call the fixture **initial_data.json|yaml|xml** if you
    want it to load automatically when running syncdb (and it will load every time
    you run syncdb!). 
    (2) You can create other fixtures to use in specific contexts like a 
    particular unit test - which we will see later.
-   (3) If your fixtures are very large, it will probably be more efficient
+   (3) The ``--indent=4`` options makes the fixture file size bigger but the
+   contents easier to read.
+   (4) If your fixtures are very large, it will probably be more efficient
    to do a database dump and restore. Fixtures are handy for populating lookup
    tables and for installing a small amount of data for unit testing.
 
@@ -53,14 +55,14 @@ recreate it using :command:`syncdb` - our 3 doodles should be reinstated::
 
 
 For now we will remove our :file:`initial_data.json` fixture as it is mostly
-useful with lookup tables, which we havent created yet!::
+useful with lookup tables, which we haven't created yet!::
    
   rm doodle_app/fixtures/initial_data.json
 
 Let's make a second fixture for unit testing - this one doesnt specify an app
 so it dumps data from all tables into the fixture::
 
-   python manage.py dumpdata > doodle_app/fixtures/test_data.json
+   python manage.py dumpdata --indent=4 > doodle_app/fixtures/test_data.json
 
 In the next section we will look at how to write a simple unit test for our
 model that uses our test fixture.

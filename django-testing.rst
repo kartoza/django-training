@@ -3,8 +3,8 @@ Testing Django Apps
 
 I'm diving into testing very early in this training manual and will emphaise it
 all along. One of the great mistakes I made when learning django was not using
-and understanding testing from the beginning. Having a good test suite if you
-want to build a robust application.
+and understanding testing from the beginning. Having a good test suite is vital
+if you want to build a robust application.
 
 Testing django applications uses the python unittest framework. There are
 various add-ons out there in the community which can improve your testing
@@ -35,12 +35,12 @@ our Doodle model there::
 
 Note the following things:
 
-* We import our Doodle model from :file:`models.py`
-* Our DoodleTest class inherits from TestCase
+* We import our Doodle model from :file:`models.py`.
+* Our DoodleTest class inherits from TestCase.
 * We can (optionally) define a list of fixtures that should be loaded before
-  the test runs
-* We use docstrings to describe the test
-* The test failure or passing is determined by our assert statement
+  the test runs (``fixtures = ...``).
+* We use docstrings to describe the test.
+* The test failure or passing is determined by our assert statement.
 * Normally you shouldn't print stuff out unless the test fails (and then you
   should use assert's message parameter to do it.
 
