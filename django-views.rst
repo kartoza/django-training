@@ -1,4 +1,4 @@
-Views 
+Views
 =====
 
 Ok by now you should understand the basic concept of a model - you define it
@@ -65,7 +65,8 @@ Good our test fails! Lets implement the view now...
 Hello World Implementation
 --------------------------
 
-Open up your doodle/views.py file. It should contain something like this::
+Open up your :file:`doodle/views.py` file. It should contain something like
+this::
    
    # Create your views here.
 
@@ -162,7 +163,7 @@ Here is my updated :file:`doodle_app/tests/py` file in its entirety::
    
        def testHelloWorldView(self):
            """Test hello world view works."""
-           myRequest = self.factory.get('/helloWorld')
+           myRequest = self.factory.get('/doodle/helloWorld')
            myResponse = helloWorld(myRequest)
            self.assertEqual(myResponse.status_code, 200)
            myExpectedString = '<h1>Hello World</h1>'
@@ -186,7 +187,7 @@ Here is my updated :file:`doodle_app/tests/py` file in its entirety::
            print 'Hello World View OK'
 
 You can see we are starting to repeat some code - a good indication that 
-some refactoring is needed! Let's run our test now and see what happens.::'
+some refactoring is needed! Let's run our test now and see what happens.::
    
    ======================================================================
    ERROR: testHelloWorldUrl (doodle_app.tests.TestViews)
@@ -218,71 +219,75 @@ some refactoring is needed! Let's run our test now and see what happens.::'
    Destroying test database for alias 'default'...
 
 
+Ok thats expected since we have no rule in our controller yet!
+
+Controller Implementation
+-------------------------
+
 So how does the client (i.e. you operating your web browser) get to see the 
-view? You need to add a rule to our controller. This is done in the urls.py
-file::
+view? You need to add a rule to our controller. This is done in the 
+:file:`urls.py` file. In django there is a 'top level' :file:`urls.py` (in our 
+case located under :file:`/home/web/django-training/django_project/django_project/urls.py`,
+and then optionally you can create 'child' url files typically one per project.
 
+We already used :file:`urls.py` when we were setting up the admin interface. 
 
+So let's set up our project :file:`urls.py` to redirect to our
+:keyword:`doodle_app` project file for doodle based urls. This will create
+a url schema like this::
+   
+   http://<domain name>:<port>/<app name>/<location>
 
+Where location will typically map to a view. First edit
+:file:`django_project/urls.py` so it looks like this::
+   
+   from django.conf.urls import patterns, include, url
+   
+   # Uncomment the next two lines to enable the admin:
+   from django.contrib import admin
+   admin.autodiscover()
 
-```
-from django.conf.urls.defaults import *
-# So we can find our hello world views
-from doodle.views import *
+   urlpatterns = patterns('',
+       # Examples:
+       # url(r'^$', 'django_project.views.home', name='home'),
+       # url(r'^django_project/', include('django_project.foo.urls')),
+   
+       # Uncomment the admin/doc line below to enable admin documentation:
+       # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+   
+       # Uncomment the next line to enable the admin:
+       url(r'^admin/', include(admin.site.urls)),
+       url(r'^/doodle/', include(doodle_app.urls)),  # <-- add this!
+   )
+   
+So we told our top level :file:`urls.py` what to do when a doodle/helloWorld
+request is received. Now lets create our :file:`doodle_app/urls.py` file::
+   
+   from django.conf.urls import patterns
 
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
+   urlpatterns = patterns('doodle_app.views',
+      (r'helloWorld', 'helloWorld'),
+   )
 
-urlpatterns = patterns('',
-    # Example:
-    # (r'^django_project/', include('django_project.foo.urls')),
+The first item in patters is a common module prefix that will be appended to
+each view name (so helloWorld will be invoked as 
+:keyword:`doodle_app.views.helloWorld`). What follows it is a list of regexex 
+and destination pairs that route traffic over to our views.
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+We don't even need to open a browser to see if this worked - just run our
+tests!::
+   
+   ----------------------------------------------------------------------
+   Ran 3 tests in 0.015s
+   
+   OK
+   Destroying test database for alias 'default'...
 
-    # Uncomment the next line to enable the admin:
-    (r'^admin/', include(admin.site.urls)),
-    # For our hello world view
-    (r'^helloWorld/', helloWorld),
-)
+Ok so everything passes and we can open our browser with confidence knowing
+that url is going to work (using url http://localhost:8000/doodle/helloWorld/).
 
-```
+.. image:: img/image015.png
 
-Earlier we used our urls.py file to configure support for the admin interface.
-Now I have added the following two lines to support our hello world view:
-
-```
-# So we can find our hello world views
-from doodle.views import *
-
-```
-
-...and...
-
-```
-    # For our hellow world view
-    (r'^helloWorld/', helloWorld),
-```
-
-The first new line just lets the controller (urls.py) know where to find our
-views (doodle.views). The second addition adds a rule to urlpatterns. The rule
-is a regular expression saying 'if the url starts with helloWorld, render the
-helloWorld view'. Simple eh?
-
-Try pointing your browser to your django instance now and see if you get a
-hello world message back:
-
-```
-http://localhost:8000/helloWorld/
-```
-
-should show:
-
-```
-Hello World
-```
 
 == A view that takes a parameter ==
 
@@ -290,16 +295,16 @@ Django uses restful style urls to pass instructions and parameters to the
 controller. Say, for example, you want to get a personalised greeting when you
 connect to a view e.g.:
 
-```
+``````````
 Hello Tim!
-```
+``````````
 
 First we would defined a new view that takes a parameter (in doodle/views.py):
 
 ```
 def helloPerson(theRequest,thePerson):
-  return HttpResponse("<h1>Hello " + str(thePerson) + "!</h1>")
-```
+return HttpResponse("<h1>Hello " + str(thePerson) + "!</h1>")
+`````````````````````````````````````````````````````````````
 
 So that will take an extra parameter and print it in the response. Of course we
 still need to add a rule to our controller...(in urls.py):
@@ -307,7 +312,7 @@ still need to add a rule to our controller...(in urls.py):
 ```
 # For our hello person view
 (r'^helloPerson/(?P<thePerson>[a-zA-Z]+)/$', helloPerson),
-```
+``````````````````````````````````````````````````````````
 
 Ok that looks a bit greek like? Lets break it down:
 
@@ -320,7 +325,7 @@ helloPerson/             <-- the literal string is matched here
 (?P<thePerson>[a-zA-Z]+) <-- match any number of upper case or lower case
                              letters to the view parameter 'thePerson'
 /$                       <-- end of the line
-```
+````````````````````````````````````````````
 
 So in plain english it means 'if the url starts with /helloPerson/ followed by
 any sequence of upper or lower case characters, assign that character sequence
@@ -329,15 +334,15 @@ to a variable called "thePerson" and pass it on to the helloPerson view.
 Make sense? It will make more sense as you get a bit more experience with
 django. Lets test out our new view:
 
-```
+``````````````````````````````````````
 http://localhost:8000/helloPerson/Tim/
-```
+``````````````````````````````````````
 
 ...should show this...
 
-```
+``````````
 Hello Tim!
-```
+``````````
 
 == A view that works with models ==
 
@@ -352,8 +357,8 @@ def listDoodleTypes(theRequest):
   myResult = "<h1>doodle types</h1>"
   for myObject in myObjects:
     myResult = myResult +str(myObject.id) + " : " + str(myObject.name) + "<br />"
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 The view simply gets all the DoodleType objects (remember django's ORM
 seamlessly pulls these from the database backend for you) and the loops through
@@ -369,13 +374,13 @@ urls.py:
 ```
 # For our list doodle types view
 (r'^listDoodleTypes/', listDoodleTypes),
-```
+````````````````````````````````````````
 
 Now point your browser at the new view:
 
-```
+``````````````````````````````````````
 http://localhost:8000/listDoodleTypes/
-```
+``````````````````````````````````````
 
 and you should see something like this:
 
@@ -383,7 +388,7 @@ and you should see something like this:
 Doodle Types
 Test Type 1
 Test Type 2
-```
+```````````
 
 == A view of a single object ==
 
@@ -397,21 +402,21 @@ def showDoodleType(theRequest, theId):
   myResult = "<h1>Doodle Type Details</h1>"
   myResult = myResult + "Id: " + str(myObject.id) + "<br />"
   myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 And a rule to our controller (urls.py):
 
 ```
 # For our show doodle type view
 (r'^showDoodleType/(?P<theId>\d+)/$', showDoodleType),
-```
+``````````````````````````````````````````````````````
 
 Test by going to:
 
-```
+```````````````````````````````````````
 http://localhost:8000/showDoodleType/1/
-```
+```````````````````````````````````````
 
 ...which should show something like :
 
@@ -419,15 +424,15 @@ http://localhost:8000/showDoodleType/1/
 Doodle Type Details
 Id: 1
 Name: Test Type 1
-```
+`````````````````
 
 == Dealing with errors ==
 
 One common error you may encounter is a url asking for a non existant object e.g.:
 
-```
+`````````````````````````````````````````
 http://localhost:8000/showDoodleType/999/
-```
+`````````````````````````````````````````
 
 You can use normal python error checking to deal with this, but django provides
 a shortcut to deal with these situations in its aptly named shortcuts module.
@@ -444,8 +449,8 @@ def showDoodleType(theRequest, theId):
   myResult = "<h1>Doodle Type Details</h1>"
   myResult = myResult + "Id: " + str(myObject.id) + "<br />"
   myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 == Deleting an object ==
 
@@ -458,21 +463,21 @@ def deleteDoodleType(theRequest, theId):
   myResult = myResult + "Id: " + str(myObject.id) + "<br />"
   myResult = myResult + "Name: " + str(myObject.name) + "<br />"
   myObject.delete()
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 And to the urls.py add:
 
 ```
 # For our delete doodle type view
 (r'^deleteDoodleType/(?P<theId>\d+)/$', deleteDoodleType),
-```
+``````````````````````````````````````````````````````````
 
 Then test:
 
-```
+`````````````````````````````````````````
 http://localhost:8000/deleteDoodleType/1/
-```
+`````````````````````````````````````````
 
 Result:
 
@@ -480,7 +485,7 @@ Result:
 Doodle Type Deleted:
 Id: 1
 Name: Test
-```
+``````````
 
 == Creating a model ==
 
@@ -494,21 +499,21 @@ def createDoodleType(theRequest, theName):
   myResult = "<h1>Doodle Type Created:</h1>"
   myResult = myResult + "Id: " + str(myObject.id) + "<br />"
   myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 And to the urls.py add:
 
 ```
 # For our delete doodle type view
 (r'^createDoodleType/(?P<theName>[a-zA-Z]+)/$', createDoodleType),
-```
+``````````````````````````````````````````````````````````````````
 
 Then test:
 
-```
+````````````````````````````````````````````````
 http://localhost:8000/createDoodleType/Squiggle/
-```
+````````````````````````````````````````````````
 
 Result:
 
@@ -516,7 +521,7 @@ Result:
 Doodle Type Created:
 Id: 2
 Name: Squiggle
-```
+``````````````
 
 == Last but not least, update a model ==
 
@@ -531,24 +536,24 @@ def updateDoodleType(theRequest, theId, theName):
   myResult = "<h1>Doodle Type Updated:</h1>"
   myResult = myResult + "Id: " + str(myObject.id) + "<br />"
   myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-  return HttpResponse(myResult)
-```
+return HttpResponse(myResult)
+`````````````````````````````
 
 And to the urls.py add:
 
 ```
 # For our update doodle type view
 (r'^updateDoodleType/(?P<theId>\d+)/(?P<theName>[a-zA-Z]+)/$', updateDoodleType),
-```
+`````````````````````````````````````````````````````````````````````````````````
 
 You will see above that we provide for two parameters to be passed to the URL -
 first the id, and then the new name for the doodle.
 
 Then test:
 
-```
+``````````````````````````````````````````````````
 http://localhost:8000/updateDoodleType/2/Squaggle/
-```
+``````````````````````````````````````````````````
 
 Result:
 
@@ -556,7 +561,7 @@ Result:
 Doodle Type Created:
 Id: 2
 Name: Squaggle
-```
+``````````````
 
 
 == CRUD !==
@@ -585,6 +590,6 @@ To see just how well you have grasped everything so far here is a little challen
 and for bonus points
 
 5) Create a controller rule and view method that will delete all 
-   of your objects.
-```
+of your objects.
+````````````````
 
