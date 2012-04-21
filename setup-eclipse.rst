@@ -12,7 +12,7 @@ things like refactoring support, code completion and so on.
    python, or even a simple text editor.
 
 Install Eclipse
-------------------
+---------------
 
 Under ubuntu you can simply do::
   
@@ -57,11 +57,11 @@ So, first up, open Eclipse and use a workspace - just use the default workspace
 if you are not familiar with eclipse.
 
 Next, create a new Django project: :menuselection:`File -> New -> Project`....
-and then choose PyDev Django Project from the dialog that appears.
+and then choose :guilabel:`PyDev Django Project` from the dialog that appears.
 
-Click :guilable:`next` and then you should give the project the same name as
+Click :guilabel:`next` and then you should give the project the same name as
 the existing Django project that you want to bring into Eclipse (in our case
-django-project). Also choose :guilable:`don't configure PYTHONPATH` from the
+django-project). Also choose :guilabel:`don't configure PYTHONPATH` from the
 options in the dialog that appears.
 
 

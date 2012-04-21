@@ -19,27 +19,67 @@ I bet you have been waiting for this moment :-) While a model represents an
 object or entity, a view represents a particular view of an object or group
 of objects. We can also have a view that does not reflect the state of any
 particular object, but rather just some hard coded information - which is what
-we will look at first.
+we will look at first - we are going to make a view that returns ``Hello World``
+as a string.
+
+Hello World Test
+----------------
 
 Since we are promoting test driven development here, let's write a test first
 and then implement the view. We can write it in :file:`doodle_app/tests.py`::
+   
+   from django.test.client import RequestFactory
+   from views import helloWorld
+   
+   class TestViews(TestCase):
+       """    Tests that doodle_app views work."""
+   
+       def setUp(self):
+           """very test needs access to the request factory.
+              So we create it here"""
+           self.factory = RequestFactory()
+   
+       def testHelloWorldView(self):
+           """Test hello world view works."""
+           myRequest = self.factory.get('/helloWorld')
+           myResponse = helloWorld(myRequest)
+           self.assertEqual(myResponse.status_code, 200)
+           myExpectedString = '<h1>Hello World</h1>'
+           myMessage = ('Unexpected response from helloWorld'
+                        ' - got %s, expected %s' %
+                        (myResponse.content, myExpectedString))
+           self.assertEqual(myResponse.content, myExpectedString, myMessage)
 
-Open up your doodle/views.py file. It should contain something like this:
+When you try to run this test, you expect a failure (since we haven't actually
+written our view yet), but we have defined the preconditions under which the
+test should pass, so we know that as soon as it does pass, our work is done!
 
-```
-# Create your views here.
-```
+So run the test and you should get output which ends something like this::
+   
+   File "/home/web/django-training/django_project/doodle_app/tests.py", line 5, in <module>
+   from views import helloWorld
+   ImportError: cannot import name helloWorld
+
+Good our test fails! Lets implement the view now...
+
+Hello World Implementation
+--------------------------
+
+Open up your doodle/views.py file. It should contain something like this::
+   
+   # Create your views here.
 
 Looks like someone was here before us then eh? The views stub was created when
 we created our application. Views in django are simply function definitions so
-we can create one like this:
+we can create one like this::
+   
+   from django.http import HttpResponse
+   
+   
+   def helloWorld(theRequest):
+       """A simple hello world view"""
+       return HttpResponse('<h1>Hello World</h1>')
 
-```
-from django.http import HttpResponse
-
-def helloWorld(theRequest):
-  return HttpResponse("<h1>Hello World</h1>")
-```
 
 Thats about the simplest view you can make. The HttpResponse class knows how to
 return any string you give it as a web page back to the clients browser.
@@ -49,9 +89,141 @@ which is an object containing all of the request context information from the
 client. For example it has any form post variables, the user agent (which
 browser is being used) etc. Since this is a really simple view the request
 parameter is actually ignored, but we will see later how to make good use of
-it.
+it. For now you should note that every view is passed a request in its
+signature.
 
-So how does the client (i.e. you operating your web browser) get to see the view? You need to add a rule to our controller. This is done in the urls.py file:
+Test the view
+-------------
+
+Ok now we can run our tests again (:command:`python manage.py test doodle_app`)
+which should produce output like this::
+   
+   Creating test database for alias 'default'...
+   Doodel 1
+   Doodle 2
+   Doodle 3
+   Test Doodle
+   .Hello World OK
+   .
+   ----------------------------------------------------------------------
+   Ran 2 tests in 0.010s
+   
+   OK
+   Destroying test database for alias 'default'...
+
+The controller
+--------------
+
+Remember we are implementing the :abbr:`Model View Controller (MVC)` design
+pattern here. We have a model (:keyword:`Doodle`), we have a view
+(:keyword:`helloWorld`). Now lets implement the controller. The idea is to
+make our view available at the url http://localhost:8000/helloWorld/.
+
+Controller Test
+---------------
+
+Of course we should first write a test, and then implement our controller, that
+way we will know when we have written exactly enough code for our new feature.
+
+Here is my updated :file:`doodle_app/tests/py` file in its entirety::
+   
+   from django.test import TestCase
+   from models import Doodle
+   from models import DoodleType
+   from django.test.client import RequestFactory
+   from views import helloWorld
+   from django.test.client import Client
+   
+   class DoodleTest(TestCase):
+       """Unit test for the Doodle model"""
+       fixtures = ['test_data.json']
+   
+       def testCreation(self):
+           """Test Doodle creation"""
+           myCount = Doodle.objects.all().count()
+           myDoodle = Doodle()
+           myDoodle.name = 'Test Doodle'
+           myDoodleType = DoodleType.objects.get(id=1)
+           myDoodle.doodle_type = myDoodleType
+           myDoodle.save()
+           for myDoodle in Doodle.objects.all():
+               print myDoodle.name
+           myMessage = 'Expected one more doodle after creation'
+           assert Doodle.objects.all().count() > myCount, myMessage
+   
+   
+   class TestViews(TestCase):
+       """    Tests that doodle_app views work."""
+   
+       def setUp(self):
+           """very test needs access to the request factory.
+              So we create it here"""
+           self.factory = RequestFactory()
+   
+       def testHelloWorldView(self):
+           """Test hello world view works."""
+           myRequest = self.factory.get('/helloWorld')
+           myResponse = helloWorld(myRequest)
+           self.assertEqual(myResponse.status_code, 200)
+           myExpectedString = '<h1>Hello World</h1>'
+           myMessage = ('Unexpected response from helloWorld'
+                        ' - got %s, expected %s' %
+                        (myResponse.content, myExpectedString))
+           self.assertEqual(myResponse.content, myExpectedString, myMessage)
+           print 'Hello World View OK'
+   
+       def testHelloWorldUrl(self):
+           """Test that the helloWorld url works using the django test web client.
+           """
+           myClient = Client()
+           myResponse = myClient.get('/helloWorld/')
+           self.assertEqual(myResponse.status_code, 200)
+           myExpectedString = '<h1>Hello World</h1>'
+           myMessage = ('Unexpected response from helloWorld'
+                        ' - got %s, expected %s' %
+                        (myResponse.content, myExpectedString))
+           self.assertEqual(myResponse.content, myExpectedString, myMessage)
+           print 'Hello World View OK'
+
+You can see we are starting to repeat some code - a good indication that 
+some refactoring is needed! Let's run our test now and see what happens.::'
+   
+   ======================================================================
+   ERROR: testHelloWorldUrl (doodle_app.tests.TestViews)
+   Test that the helloWorld url works using the django test web client.
+   ----------------------------------------------------------------------
+   Traceback (most recent call last):
+     File "/home/web/django-training/django_project/doodle_app/tests.py", line 50, in testHelloWorldUrl
+       myResponse = myClient.get('/helloWorld/')
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/test/client.py", line 439, in get
+       response = super(Client, self).get(path, data=data, **extra)
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/test/client.py", line 244, in get
+       return self.request(**r)
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 150, in get_response
+       response = callback(request, **param_dict)
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/utils/decorators.py", line 91, in _wrapped_view
+       response = view_func(request, *args, **kwargs)
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/views/defaults.py", line 20, in page_not_found
+       t = loader.get_template(template_name) # You need to create a 404.html template.
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/template/loader.py", line 145, in get_template
+       template, origin = find_template(template_name)
+     File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/template/loader.py", line 138, in find_template
+       raise TemplateDoesNotExist(name)
+   TemplateDoesNotExist: 404.html
+   
+   ----------------------------------------------------------------------
+   Ran 3 tests in 0.050s
+   
+   FAILED (errors=1)
+   Destroying test database for alias 'default'...
+
+
+So how does the client (i.e. you operating your web browser) get to see the 
+view? You need to add a rule to our controller. This is done in the urls.py
+file::
+
+
+
 
 ```
 from django.conf.urls.defaults import *
