@@ -59,10 +59,10 @@ useful with lookup tables, which we haven't created yet!::
    
   rm doodle_app/fixtures/initial_data.json
 
-Let's make a second fixture for unit testing - this one doesnt specify an app
-so it dumps data from all tables into the fixture::
+Let's make a second fixture for unit testing - this one doesnt specifies only the
+Doodle model's data to go into the fixture::
 
-   python manage.py dumpdata --indent=4 > doodle_app/fixtures/test_data.json
+   python manage.py dumpdata --indent=4 doodle_app.Doodle > doodle_app/fixtures/test_data.json
 
 In the next section we will look at how to write a simple unit test for our
 model that uses our test fixture.

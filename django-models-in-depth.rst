@@ -51,29 +51,25 @@ comments::
   # Use python time goodies
   import datetime
 
-  # A class defines our model if it inherits from models.model
   class Doodle(models.Model):
-    # Create a name field
+    """A class defines our model if it inherits from models.model"""
     name = models.CharField(max_length=255)
-    # And a geometry field for our doodle
-    doodle = models.LineStringField(srid=4326,null=True, blank=True)
-    # Lastly make an auto populated date field
+    """The name of our doodle"""
     doodle_date = models.DateTimeField('DateAdded', 
                   auto_now=True, auto_now_add=False)
-    # Model manager that must be added to any model with a geometry
-    objects = models.GeoManager()
+    """An auto populated date field"""
 
     # Metadata inner class
     class Meta:
-      # Name the table should be given on the database backend (optional)
-      db_table = 'doodle'
-      # Name to be used in the user interface (generated web pages) for this model
-      verbose_name = ('Fantastic Doodle')
-      # Plural name to be used in the user interface
+      verbose_name = ('Doodle')
+      """ame to be used in the user interface (generated web pages) for this
+      model (defaults to model name)."""
       verbose_name_plural = ('Fantastic Doodles')
-      # Column ordering to be used by default if a collection of model instances is
-      # obtained.
+      """Plural name to be used in the user interface (a default pluralisation
+      will be given if none specified)."""
       ordering = ('doodle_date','name',)
+      """Column ordering to be used by default if a collection of model instances is
+      # obtained."""
 
 
 Field Types
@@ -173,17 +169,26 @@ First delete the myChoices... line we created above. Next add a new class to
 models.py (put it before the doodle class) that looks like this::
   
   class DoodleType(models.Model):
+      """A look up table for doodle types"""
       name = models.CharField(max_length=255)
+      """The name of this type."""
       objects = models.Manager()
+      """Optional name for the model manager instance for this model."""
 
       def __unicode__(self):
+          """Return a plain text string if this object is cast to str"""
           return self.name
 
       class Meta:
           db_table = 'doodletype'
+          """You can override the default db table name for the model, but 
+          I don't recommend it."""
           verbose_name = ('Doodle Type')
+          """User friendly name for our model."""
           verbose_name_plural = ('Doodle Types')
+          """User friendly pluralisation."""
           ordering = ('name',)
+          """Default field to order by."""
 
 .. note:: This is a good use case for using :file:`initial_data.json` fixtures -
    when you want to be sure that the application or test environment is always
@@ -257,40 +262,9 @@ failures. Let's see what happens when we run our tests with the above changes::
   $ python manage.py test doodle_app
   Creating test database for alias 'default'...
   Problem installing fixture '/home/web/django-training/django_project/doodle_app/fixtures/test_data.json': Traceback (most recent call last):
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/core/management/commands/loaddata.py", line 196, in handle
-  obj.save(using=using)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/core/serializers/base.py", line 165, in save
-  models.Model.save_base(self.object, using=using, raw=True)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 529, in save_base
-  rows = manager.using(using).filter(pk=pk_val)._update(values)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/query.py", line 557, in _update
-  return query.get_compiler(self.db).execute_sql(None)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 986, in execute_sql
-  cursor = super(SQLUpdateCompiler, self).execute_sql(result_type)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 818, in execute_sql
-  cursor.execute(sql, params)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 337, in execute
-  return Database.Cursor.execute(self, query, params)
-  IntegrityError: Could not load contenttypes.ContentType(pk=7): columns app_label, model are not unique
-  E
-  ======================================================================
-  ERROR: testCreation (doodle_app.tests.DoodleTest)
-  Test Doodle creation
-  ----------------------------------------------------------------------
-  Traceback (most recent call last):
-  File "/home/web/django-training/django_project/doodle_app/tests.py", line 13, in testCreation
-  myDoodle.save()
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 463, in save
-  self.save_base(using=using, force_insert=force_insert, force_update=force_update)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/base.py", line 551, in save_base
-  result = manager._insert([self], fields=fields, return_id=update_pk, using=using, raw=raw)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/manager.py", line 203, in _insert
-  return insert_query(self.model, objs, fields, **kwargs)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/query.py", line 1576, in insert_query
-  return query.get_compiler(using=using).execute_sql(return_id)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py", line 910, in execute_sql
-  cursor.execute(sql, params)
-  File "/home/web/django-training/python/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 337, in execute
+  ..
+  ..
+  ..
   return Database.Cursor.execute(self, query, params)
   IntegrityError: doodle_app_doodle.doodle_type_id may not be NULL
   ----------------------------------------------------------------------
@@ -322,7 +296,8 @@ DoodleType's in the admin interface::
   python manage.py dumpdata --indent=4 doodle_app.DoodleType > doodle_app/fixtures/initial_data.json 
 
 Then I updated my test fixture (:file:`doodle_app/fixtures/test_data.json`),
-assigning a foreign key reference for all of the Doodle records e.g.::
+assigning a foreign key reference for all of the Doodle records and updating
+the doodle names e.g.::
    
   [
       {
@@ -412,23 +387,25 @@ I would like to empahasise the difference between :file:`initial_data.json` and
   reference one or more test fixtures in your unit test, effectively telling
   your test class what test data should be used while running the tests.
 
+
 One last thing
 --------------
 
 If you were alert, you might have wondered what is to prevent the same
-DoodleType name being added twice. In fact django automatically added a unique
-constraint to that field:
+DoodleType name being added twice. In fact django automatically takes care of
+this for you. If you are using a backend like postgresql, django will also add
+a unique constraint to that field:
 
 ```
-django_project=# \d doodletype
-Table "public.doodletype"
+django_project=# \d doodle_type
+Table "public.doodle_type"
  Column |          Type          |                        Modifiers                        
 --------+------------------------+---------------------------------------------------------
  id     | integer                | not null default nextval('doodletype_id_seq'::regclass)
  name   | character varying(255) | not null
 Indexes:
-"doodletype_pkey" PRIMARY KEY, btree (id)
-"doodletype_name_key" UNIQUE, btree (name)
+"doodle_type_pkey" PRIMARY KEY, btree (id)
+"doodle_type_name_key" UNIQUE, btree (name)
 
 ```
 
@@ -436,7 +413,7 @@ So you will see in the next snippet what would happen if you try to insert a
 duplicate record:
 
 ```
-django_project=# select * from doodletype;
+django_project=# select * from doodle_type;
  id | name 
 ----+------
   1 | Test
