@@ -364,17 +364,10 @@ any sequence of upper or lower case characters, assign that character sequence
 to a variable called "thePerson" and pass it on to the helloPerson view.
 
 Make sense? It will make more sense as you get a bit more experience with
-django. Lets test out our new view:
-
-````````````````````````````````
-http://localhost:8000/hello/Tim/
-````````````````````````````````
-
-...should show this...
-
+django. Lets test out our new view at http://localhost:8000/hello/Tim/ which 
+should show this::
+   
    Hello Tim
-
-
 
 Model Based Views
 -----------------
@@ -389,7 +382,7 @@ First our tests::
    
    def testListDoodleTypesView(self):
        """Test list doodle types view works."""
-       myRequest = self.factory.get('/doodle/hello/Tim')
+       myRequest = self.factory.get('/doodle/listDoodleTypes/')
        myResponse = hello(myRequest, 'Tim')
        self.assertEqual(myResponse.status_code, 200)
        myExpectedString = '<h1>Hello Tim</h1>'
@@ -457,8 +450,36 @@ Single Object View
 ------------------
 
 Ok so now we have a view that is driven by the data in our model. What if we
-want to see just a specific model instance? We can use the get() call to do
-that (in :file:`doodle_app/views.py`)::
+want to see just a specific model instance? 
+
+First our test::
+   
+   def testShowDoodleTypeView(self):
+        """Test list doodle types view works."""
+        myRequest = self.factory.get('/doodle/showDoodleType/1/')
+        myResponse = showDoodleType(myRequest, 1)
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Details</h1>Id: 1'
+                            '<br />Name: Big<br />')
+        myMessage = ('Unexpected response from hello'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+   
+    def testShowDoodleTypeUrl(self):
+        """Test list doodle types using the django test web client.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/showDoodleType/1/')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Details</h1>Id: 1'
+                            '<br />Name: Big<br />')
+        myMessage = ('Unexpected response from helloWorld URL'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+We can use the get() call to do that (in :file:`doodle_app/views.py`)::
    
    def showDoodleType(theRequest, theId):
        myObject = DoodleType.objects.get(id=theId)
@@ -471,75 +492,93 @@ And a rule to our controller (:file:`doodle_app/urls.py`)::
    
    (r'^showDoodleType/(?P<theId>\d+)/$', 'showDoodleType'),
 
-Test by going to: http://localhost:8000/doodle/showDoodleType/1/ ...which should show
-something like :
+Test by going to: http://localhost:8000/doodle/showDoodleType/1/ - which should
+ show something like::
+   
+   Doodle Type Details
+   Id: 1
+   Name: Test Type 1
 
-```
-Doodle Type Details
-Id: 1
-Name: Test Type 1
-`````````````````
+Dealing with errors
+-------------------
 
-== Dealing with errors ==
+One common error you may encounter is a url asking for a non existant object
+e.g. http://localhost:8000/showDoodleType/999/ ? Using get on a non existing
+object will raise an error - which in production mode will return a 500
+response to the user. It would be far better to return 404 (page not found),
+or deal with the error gracefully.
 
-One common error you may encounter is a url asking for a non existant object e.g.:
+First lets make a test::
+   
+    def testInvalidShowDoodleTypeView(self):
+        """Test show single doodle type view works.."""
+        myRequest = self.factory.get('/doodle/showDoodleType/999/')
+        myResponse = showDoodleType(myRequest, 999)
+        self.assertEqual(myResponse.status_code, 404)
 
-`````````````````````````````````````````
-http://localhost:8000/showDoodleType/999/
-`````````````````````````````````````````
+    def testInvalidShowDoodleTypeUrl(self):
+        """Test show single doodle type url works.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/showDoodleType/999/')
+        self.assertEqual(myResponse.status_code, 404)
+
+Both tests will raise a :keyword:`DoesNotExist` error::
+   
+   DoesNotExist: DoodleType matching query does not exist.
 
 You can use normal python error checking to deal with this, but django provides
 a shortcut to deal with these situations in its aptly named shortcuts module.
-Lets adapt our showDoodleType view to be a little more robust:
+Lets adapt our showDoodleType view to be a little more robust::
+   
+   from django.shortcuts import get_object_or_404
+   
+   def showDoodleType(theRequest, theId):
+     # Old way:
+     # myObject = DoodleType.objects.get(id=theId)
+     # New way: 
+     myObject = get_object_or_404(DoodleType, id=theId)
+     myResult = "<h1>Doodle Type Details</h1>"
+     myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+     myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+   return HttpResponse(myResult)
 
-```
-from django.shortcuts import get_object_or_404
+Deleting an Object
+------------------
 
-def showDoodleType(theRequest, theId):
-  # Old way:
-  # myObject = DoodleType.objects.get(id=theId)
-  # New way: 
-  myObject = get_object_or_404(DoodleType, id=theId)
-  myResult = "<h1>Doodle Type Details</h1>"
-  myResult = myResult + "Id: " + str(myObject.id) + "<br />"
-  myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-return HttpResponse(myResult)
-`````````````````````````````
+It's nice to be able to delete an object right?
 
-== Deleting an object ==
+Test::
+   
 
-To your views.py add:
+To your views.py add::
+   
+   def deleteDoodleType(theRequest, theId):
+    """Delete a doodle type given its id"""
+    myObject = get_object_or_404(DoodleType, id=theId)
+    myResult = "<h1>Doodle Type Deleted:</h1>"
+    myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+    myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+    try:
+        myObject.delete()
+    except Exception, e:
+        myResult = '<b>Error:</b>' + str(e)
+    return HttpResponse(myResult)
 
-```
-def deleteDoodleType(theRequest, theId):
-  myObject = get_object_or_404(DoodleType, id=theId)
-  myResult = "<h1>Doodle Type Deleted:</h1>"
-  myResult = myResult + "Id: " + str(myObject.id) + "<br />"
-  myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-  myObject.delete()
-return HttpResponse(myResult)
-`````````````````````````````
+.. note:: We added exception handling here - if there is a related object
+   (e.g. :keyword:`Doodle`) that depends on this instance, an exception will
+   be raised.
 
-And to the urls.py add:
+And to the urls.py add::
+   
+   (r'^deleteDoodleType/(?P<theId>\d+)/$', deleteDoodleType),
 
-```
-# For our delete doodle type view
-(r'^deleteDoodleType/(?P<theId>\d+)/$', deleteDoodleType),
-``````````````````````````````````````````````````````````
+Then try  http://localhost:8000/deleteDoodleType/1/ which should produce
+result::
+   Doodle Type Deleted:
+   Id: 1
+   Name: Test
 
-Then test:
-
-`````````````````````````````````````````
-http://localhost:8000/deleteDoodleType/1/
-`````````````````````````````````````````
-
-Result:
-
-```
-Doodle Type Deleted:
-Id: 1
-Name: Test
-``````````
 
 == Creating a model ==
 

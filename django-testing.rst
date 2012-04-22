@@ -13,24 +13,24 @@ you how to create :doc:`django-fixtures`, which are an important cornerstone of
 any test suite you build. Django creates a :file:`test.py` file for you
 automatically when it creates your app, so let's implement a simple test for
 our Doodle model there::
+   
+   from django.test import TestCase
+   from models import Doodle
+   
+   class DoodleTest(TestCase):
+       """Unit test for the Doodle model"""
+       fixtures = ['test_data.json']
 
-  from django.test import TestCase
-  from models import Doodle
-
-  class DoodleTest(TestCase):
-      """Unit test for the Doodle model"""
-      fixtures = ['test_data.json']
-
-      def testCreation(self):
-          """Test Doodle creation"""
-          myCount = Doodle.objects.all().count()
-          myDoodle = Doodle()
-          myDoodle.name = 'Test Doodle'
-          myDoodle.save()
-          for myDoodle in Doodle.objects.all():
-          print myDoodle.name
-          myMessage = 'Expected one more doodle after creation'
-          assert Doodle.objects.all().count() > myCount, myMessage
+       def testCreation(self):
+           """Test Doodle creation"""
+           myCount = Doodle.objects.all().count()
+           myDoodle = Doodle()
+           myDoodle.name = 'Test Doodle'
+           myDoodle.save()
+           for myDoodle in Doodle.objects.all():
+           print myDoodle.name
+           myMessage = 'Expected one more doodle after creation'
+           assert Doodle.objects.all().count() > myCount, myMessage
 
 
 Note the following things:
@@ -45,19 +45,19 @@ Note the following things:
   should use assert's message parameter to do it.
 
 Now we can run the test and see that everything passes::
-
-  $ python manage.py test doodle_app
-  Creating test database for alias 'default'...
-  Tim Doodle
-  foobar
-  digettydoo
-  Test Doodle
-  .
-  ----------------------------------------------------------------------
-  Ran 1 test in 0.052s
-
-  OK
-  Destroying test database for alias 'default'...
+   
+   $ python manage.py test doodle_app
+      Creating test database for alias 'default'...
+   Tim Doodle
+   foobar
+   digettydoo
+   Test Doodle
+   .
+   ----------------------------------------------------------------------
+   Ran 1 test in 0.052s
+   
+   OK
+   Destroying test database for alias 'default'...
 
 Ok so now if we ever break our Doodle model, we will know about it!
 
