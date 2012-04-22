@@ -41,7 +41,7 @@ and then implement the view. We can write it in :file:`doodle_app/tests.py`::
    
        def testHelloWorldView(self):
            """Test hello world view works."""
-           myRequest = self.factory.get('/helloWorld')
+           myRequest = self.factory.get('/doodle/helloWorld')
            myResponse = helloWorld(myRequest)
            self.assertEqual(myResponse.status_code, 200)
            myExpectedString = '<h1>Hello World</h1>'
@@ -117,8 +117,11 @@ The controller
 
 Remember we are implementing the :abbr:`Model View Controller (MVC)` design
 pattern here. We have a model (:keyword:`Doodle`), we have a view
-(:keyword:`helloWorld`). Now lets implement the controller. The idea is to
-make our view available at the url http://localhost:8000/helloWorld/.
+(:keyword:`helloWorld`). Now lets implement the controller 
+(`django docs <https://docs.djangoproject.com/en/dev/topics/http/urls/>`_).
+The idea is to make our view available at the url:
+
+   http://localhost:8000/helloWorld/.
 
 Controller Test
 ---------------
@@ -171,20 +174,18 @@ Here is my updated :file:`doodle_app/tests/py` file in its entirety::
                         ' - got %s, expected %s' %
                         (myResponse.content, myExpectedString))
            self.assertEqual(myResponse.content, myExpectedString, myMessage)
-           print 'Hello World View OK'
    
        def testHelloWorldUrl(self):
            """Test that the helloWorld url works using the django test web client.
            """
            myClient = Client()
-           myResponse = myClient.get('/helloWorld/')
+           myResponse = myClient.get('/doodle/helloWorld/')
            self.assertEqual(myResponse.status_code, 200)
            myExpectedString = '<h1>Hello World</h1>'
            myMessage = ('Unexpected response from helloWorld'
                         ' - got %s, expected %s' %
                         (myResponse.content, myExpectedString))
            self.assertEqual(myResponse.content, myExpectedString, myMessage)
-           print 'Hello World View OK'
 
 You can see we are starting to repeat some code - a good indication that 
 some refactoring is needed! Let's run our test now and see what happens.::
@@ -289,43 +290,74 @@ that url is going to work (using url http://localhost:8000/doodle/helloWorld/).
 .. image:: img/image015.png
 
 
-== A view that takes a parameter ==
+Parameterised Views
+-------------------
 
-Django uses restful style urls to pass instructions and parameters to the
+Django uses urls to pass instructions and parameters to the
 controller. Say, for example, you want to get a personalised greeting when you
-connect to a view e.g.:
+connect to a view e.g.::
+   
+   Hello Tim!
 
-``````````
-Hello Tim!
-``````````
+First write your tests (for view and controller)::
+   
+   from views import helloWorld
+   
+   
+   def testHelloTimView(self):
+       """Test hello tim view works."""
+       myRequest = self.factory.get('/doodle/hello/Tim')
+       myResponse = helloWorld(myRequest, 'Tim')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = '<h1>Hello Tim</h1>'
+       myMessage = ('Unexpected response from hello'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
+   
+   
+   def testHelloTimUrl(self):
+       """Test that the hello tim url works using the django test web client.
+       """
+       myClient = Client()
+       myResponse = myClient.get('/doodle/hello/Tim/')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = '<h1>Hello Tim</h1>'
+       myMessage = ('Unexpected response from helloWorld URL'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
 
-First we would defined a new view that takes a parameter (in doodle/views.py):
 
-```
-def helloPerson(theRequest,thePerson):
-return HttpResponse("<h1>Hello " + str(thePerson) + "!</h1>")
-`````````````````````````````````````````````````````````````
+Now we implement our code:
+
+* a new view that takes a parameter (in doodle_app/views.py)
+* a new url handler
+
+In :file:`doodle_app/views.py`::
+   
+   def helloPerson(theRequest,thePerson):
+      """A view that prints a person's name"""
+      return HttpResponse("<h1>Hello " + str(thePerson) + "!</h1>")
 
 So that will take an extra parameter and print it in the response. Of course we
-still need to add a rule to our controller...(in urls.py):
+still need to add a rule to our controller...(in :file:`urls.py`)::
+   
+   # For our hello person view
+   (r'hello/(?P<thePerson>[a-zA-Z]+)/$', 'hello'),
+   
+Ok that looks a bit geek like? Lets break it down::
+   
+   r                        <-- what follows in quotes is a regular expression
+   ^                        <-- carat means 'start of the line' 
+                                note the http://localhost:8000/
+                                part of the url is ignored in url matching
+   helloPerson/             <-- the literal string is matched here
+   (?P<thePerson>[a-zA-Z]+) <-- match any number of upper case or lower case
+                                letters to the view parameter 'thePerson'
+   /$                       <-- end of the line
 
-```
-# For our hello person view
-(r'^helloPerson/(?P<thePerson>[a-zA-Z]+)/$', helloPerson),
-``````````````````````````````````````````````````````````
 
-Ok that looks a bit greek like? Lets break it down:
-
-```
-r                        <-- what follows in quotes is a regular expression
-^                        <-- carat means 'start of the line' 
-                             note the http://localhost:8000/
-                             part of the url is ignored in url matching
-helloPerson/             <-- the literal string is matched here
-(?P<thePerson>[a-zA-Z]+) <-- match any number of upper case or lower case
-                             letters to the view parameter 'thePerson'
-/$                       <-- end of the line
-````````````````````````````````````````````
 
 So in plain english it means 'if the url starts with /helloPerson/ followed by
 any sequence of upper or lower case characters, assign that character sequence
@@ -334,31 +366,67 @@ to a variable called "thePerson" and pass it on to the helloPerson view.
 Make sense? It will make more sense as you get a bit more experience with
 django. Lets test out our new view:
 
-``````````````````````````````````````
-http://localhost:8000/helloPerson/Tim/
-``````````````````````````````````````
+````````````````````````````````
+http://localhost:8000/hello/Tim/
+````````````````````````````````
 
 ...should show this...
 
-``````````
-Hello Tim!
-``````````
+   Hello Tim
 
-== A view that works with models ==
 
-Ok thats very nifty but in the real world, nine times out of ten you want your view to interact with model data. First add a few more entries to your DoodleType table using the admin web interface. Now lets make a view that shows a list of DoodleTypes (in doodle/views.py):
 
-```
-from doodle.models import *
-def listDoodleTypes(theRequest):
-  myObjects = DoodleType.objects.all()
-  # Optional - sort descending:
-  #myObjects = DoodleType.objects.all().order_by("-name")
-  myResult = "<h1>doodle types</h1>"
-  for myObject in myObjects:
-    myResult = myResult +str(myObject.id) + " : " + str(myObject.name) + "<br />"
-return HttpResponse(myResult)
-`````````````````````````````
+Model Based Views
+-----------------
+
+Ok thats very nifty but in the real world, nine times out of ten you want your
+view to interact with model data. Let's make a view that shows a list of 
+DoodleTypes.
+
+.. note:: Try to implement your own tests from here on forward!
+
+First our tests::
+   
+   def testListDoodleTypesView(self):
+       """Test list doodle types view works."""
+       myRequest = self.factory.get('/doodle/hello/Tim')
+       myResponse = hello(myRequest, 'Tim')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = '<h1>Hello Tim</h1>'
+       myMessage = ('Unexpected response from hello'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
+   
+   
+    def testListDoodleTypesUrl(self):
+       """Test that list doodle types using the django test web client.
+       """
+       myClient = Client()
+       myResponse = myClient.get('/doodle/listDoodleTypes/')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = ('<h1>doodle types</h1>1 : Big<br />'
+                           '2 : Medium<br />3 : Small<br />')
+       myMessage = ('Unexpected response from helloWorld URL'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+:file:`doodle_app/views.py`::
+   
+   from doodle_app.models import DoodleType
+   
+   
+   def listDoodleTypes(theRequest):
+       """A view to show all doodle types"""
+       myObjects = DoodleType.objects.all()
+       # Optional - sort descending:
+       #myObjects = DoodleType.objects.all().order_by("-name")
+       myResult = "<h1>doodle types</h1>"
+       for myObject in myObjects:
+          myResult = myResult +str(myObject.id) + " : " + str(myObject.name) + "<br />"
+       return HttpResponse(myResult)
+
 
 The view simply gets all the DoodleType objects (remember django's ORM
 seamlessly pulls these from the database backend for you) and the loops through
@@ -369,56 +437,42 @@ Before we can see the view, you need to add a new rule to the controller.
 Sensing a ryhthmn here? Good it is the same process over and over - create
 models, make views on to your models, define controller rules so that you can
 get to your views. So to make our new controller rule, we add a line in
-urls.py:
+:file:`doodle_app/urls.py`::
+   
+   (r'^listDoodleTypes/', 'listDoodleTypes'),
 
-```
-# For our list doodle types view
-(r'^listDoodleTypes/', listDoodleTypes),
-````````````````````````````````````````
 
-Now point your browser at the new view:
+Now point your browser at the new view: http://localhost:8000/doodle/listDoodleTypes/
+and you should see something like this::
+   
+   doodle types
+   
+   1 : Big
+   2 : Medium
+   3 : Small
 
-``````````````````````````````````````
-http://localhost:8000/listDoodleTypes/
-``````````````````````````````````````
+.. note:: Check all your tests are passing whenever you change things!
 
-and you should see something like this:
-
-```
-Doodle Types
-Test Type 1
-Test Type 2
-```````````
-
-== A view of a single object ==
+Single Object View
+------------------
 
 Ok so now we have a view that is driven by the data in our model. What if we
 want to see just a specific model instance? We can use the get() call to do
-that (in doodle/views.py):
+that (in :file:`doodle_app/views.py`)::
+   
+   def showDoodleType(theRequest, theId):
+       myObject = DoodleType.objects.get(id=theId)
+       myResult = "<h1>Doodle Type Details</h1>"
+       myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+       myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+       return HttpResponse(myResult)
 
-```
-def showDoodleType(theRequest, theId):
-  myObject = DoodleType.objects.get(id=theId)
-  myResult = "<h1>Doodle Type Details</h1>"
-  myResult = myResult + "Id: " + str(myObject.id) + "<br />"
-  myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-return HttpResponse(myResult)
-`````````````````````````````
+And a rule to our controller (:file:`doodle_app/urls.py`)::
+   
+   (r'^showDoodleType/(?P<theId>\d+)/$', 'showDoodleType'),
 
-And a rule to our controller (urls.py):
-
-```
-# For our show doodle type view
-(r'^showDoodleType/(?P<theId>\d+)/$', showDoodleType),
-``````````````````````````````````````````````````````
-
-Test by going to:
-
-```````````````````````````````````````
-http://localhost:8000/showDoodleType/1/
-```````````````````````````````````````
-
-...which should show something like :
+Test by going to: http://localhost:8000/doodle/showDoodleType/1/ ...which should show
+something like :
 
 ```
 Doodle Type Details
