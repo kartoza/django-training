@@ -73,8 +73,7 @@ Field Types
 -----------
 
 The different types of field that you can use in django models are described in
-the `Django
-documentation<http://docs.djangoproject.com/en/dev/ref/models/fields/>`_.
+the `Django documentation <http://docs.djangoproject.com/en/dev/ref/models/fields/>`_.
 There are a number of different field types you can use, including special
 types that will build foriegn key constraints, multikey join tables, lookup
 lists and so on. Here is a complete list of allowed types:

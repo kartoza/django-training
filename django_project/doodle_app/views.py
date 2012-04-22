@@ -56,3 +56,13 @@ def createDoodleType(theRequest, theName):
     myResult = myResult + "Id: " + str(myObject.id) + "<br />"
     myResult = myResult + "Name: " + str(myObject.name) + "<br />"
     return HttpResponse(myResult)
+
+
+def updateDoodleType(theRequest, theId, theName):
+    myObject = get_object_or_404(DoodleType, id=theId)
+    myObject.name = theName
+    myObject.save()
+    myResult = "<h1>Doodle Type Updated:</h1>"
+    myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+    myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+    return HttpResponse(myResult)

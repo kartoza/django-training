@@ -5,7 +5,9 @@ from django.test.client import RequestFactory
 from views import helloWorld
 from views import hello
 from views import showDoodleType
+from views import deleteDoodleType
 from views import createDoodleType
+from views import updateDoodleType
 from django.test.client import Client
 from django.http import Http404
 
@@ -148,6 +150,31 @@ class TestViews(TestCase):
         myResponse = myClient.get('/doodle/showDoodleType/999/')
         self.assertEqual(myResponse.status_code, 404)
 
+    def testDeleteDoodleTypeView(self):
+        """Test delete single doodle type view works."""
+        myRequest = self.factory.get('/doodle/deleteDoodleType/1/')
+        myResponse = deleteDoodleType(myRequest, 1)
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Deleted:</h1>Id: 1<br />'
+                            'Name: Big<br />')
+        myMessage = ('Unexpected response from hello'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testDeleteDoodleTypeUrl(self):
+        """Test delete single doodle type url works.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/deleteDoodleType/1/')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Deleted:</h1>Id: 1<br />'
+                            'Name: Big<br />')
+        myMessage = ('Unexpected response from helloWorld URL'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
     def testCreateDoodleTypeView(self):
         """Test create single doodle type view works."""
         myRequest = self.factory.get('/doodle/createDoodleType/SuperDoodle/')
@@ -168,6 +195,31 @@ class TestViews(TestCase):
         self.assertEqual(myResponse.status_code, 200)
         myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
                             'Name: SuperDoodle<br />')
+        myMessage = ('Unexpected response from helloWorld URL'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testUpdateDoodleTypeView(self):
+        """Test update single doodle type view works."""
+        myRequest = self.factory.get('/doodle/updateDoodleType/SuperDoodle/')
+        myResponse = updateDoodleType(myRequest, 1, 'Foobar')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Updated:</h1>Id: 1<br />Name: '
+                            'Foobar<br />')
+        myMessage = ('Unexpected response from hello'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testUpdateDoodleTypesUrl(self):
+        """Test update doodle type using a url.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/updateDoodleType/1/Foobar/')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Updated:</h1>Id: 1<br />Name: '
+                            'Foobar<br />')
         myMessage = ('Unexpected response from helloWorld URL'
                      ' - got %s, expected %s' %
                      (myResponse.content, myExpectedString))

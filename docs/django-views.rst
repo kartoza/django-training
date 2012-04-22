@@ -331,7 +331,7 @@ First write your tests (for view and controller)::
 
 Now we implement our code:
 
-* a new view that takes a parameter (in doodle_app/views.py)
+* a new view that takes a parameter (in :file:`doodle_app/views.py`)
 * a new url handler
 
 In :file:`doodle_app/views.py`::
@@ -561,8 +561,32 @@ It's nice to be able to delete an object right?
 
 Test::
    
+   def testDeleteDoodleTypeView(self):
+       """Test delete single doodle type view works."""
+       myRequest = self.factory.get('/doodle/deleteDoodleType/1/')
+       myResponse = deleteDoodleType(myRequest, 1)
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = ('<h1>Doodle Type Deleted:</h1>Id: 1<br />'
+                           'Name: Big<br />')
+       myMessage = ('Unexpected response from hello'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
+   
+   def testDeleteDoodleTypeUrl(self):
+       """Test delete single doodle type url works.
+       """
+       myClient = Client()
+       myResponse = myClient.get('/doodle/deleteDoodleType/1/')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = ('<h1>Doodle Type Deleted:</h1>Id: 1<br />'
+                           'Name: Big<br />')
+       myMessage = ('Unexpected response from helloWorld URL'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
 
-To your views.py add::
+To implement delete support you can do something like::
    
    def deleteDoodleType(theRequest, theId):
     """Delete a doodle type given its id"""
@@ -580,9 +604,9 @@ To your views.py add::
    (e.g. :keyword:`Doodle`) that depends on this instance, an exception will
    be raised.
 
-And to the urls.py add::
+And to the :file:`urls.py` add::
    
-   (r'^deleteDoodleType/(?P<theId>\d+)/$', deleteDoodleType),
+   (r'^deleteDoodleType/(?P<theId>\d+)/$', 'deleteDoodleType'),
 
 Then try  http://localhost:8000/doodle/deleteDoodleType/1/ which should produce
 result::
@@ -650,48 +674,66 @@ which should produce::
    Name: Squiggle
 
 
-== Last but not least, update a model ==
+Last but not least, update a model
+----------------------------------
+
+You can use your views to update models too. First a test::
+...........................................................
+   def testUpdateDoodleTypeView(self):
+       """Test update single doodle type view works."""
+       myRequest = self.factory.get('/doodle/updateDoodleType/SuperDoodle/')
+       myResponse = updateDoodleType(myRequest, 1, 'Foobar')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = ('<h1>Doodle Type Updated:</h1>Id: 1<br />Name: '
+                           'Foobar<br />')
+       myMessage = ('Unexpected response from hello'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testUpdateDoodleTypesUrl(self):
+       """Test update doodle type using a url.
+       """
+       myClient = Client()
+       myResponse = myClient.get('/doodle/updateDoodleType/1/Foobar/')
+       self.assertEqual(myResponse.status_code, 200)
+       myExpectedString = ('<h1>Doodle Type Updated:</h1>Id: 1<br />Name: '
+                           'Foobar<br />')
+       myMessage = ('Unexpected response from helloWorld URL'
+                    ' - got %s, expected %s' %
+                    (myResponse.content, myExpectedString))
+       self.assertEqual(myResponse.content, myExpectedString, myMessage)
 
 
-To your views.py add:
 
-```
-def updateDoodleType(theRequest, theId, theName):
-  myObject = get_object_or_404(DoodleType, id=theId)
-  myObject.name = theName
-  myObject.save()
-  myResult = "<h1>Doodle Type Updated:</h1>"
-  myResult = myResult + "Id: " + str(myObject.id) + "<br />"
-  myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-return HttpResponse(myResult)
-`````````````````````````````
+To your views.py add::
+   def updateDoodleType(theRequest, theId, theName):
+       myObject = get_object_or_404(DoodleType, id=theId)
+       myObject.name = theName
+       myObject.save()
+       myResult = "<h1>Doodle Type Updated:</h1>"
+       myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+       myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+       return HttpResponse(myResult)
 
-And to the urls.py add:
 
-```
-# For our update doodle type view
-(r'^updateDoodleType/(?P<theId>\d+)/(?P<theName>[a-zA-Z]+)/$', updateDoodleType),
-`````````````````````````````````````````````````````````````````````````````````
+And to the urls.py add::
+   
+   (r'^updateDoodleType/(?P<theId>\d+)/(?P<theName>[a-zA-Z]+)/$', 'updateDoodleType'),
+
 
 You will see above that we provide for two parameters to be passed to the URL -
-first the id, and then the new name for the doodle.
-
-Then test:
-
-`````````````````````````````````````````````````````````
-http://localhost:8000/doodle/updateDoodleType/2/Squaggle/
-`````````````````````````````````````````````````````````
-
-Result:
-
-```
-Doodle Type Created:
-Id: 2
-Name: Squaggle
-``````````````
+first the id, and then the new name for the doodle. You can test if using e.g. 
+http://localhost:8000/doodle/updateDoodleType/2/Squaggle/ which will give you
+a result like this::
+   
+   Doodle Type Created:
+   Id: 2
+   Name: Squaggle
 
 
-== CRUD !==
+CRUD!
+-----
 
 Now we have crud facilities in our application!:
 
@@ -704,19 +746,20 @@ Now we have crud facilities in our application!:
 CRUD is the basis for pretty much any data driven application so we are well on
 our way to being able to create something useful.
 
-== Now you try! ==
+Now you try!
+------------
 
-To see just how well you have grasped everything so far here is a little challenge:
+To see just how well you have grasped everything so far here is a little
+challenge:
 
-```
-1) Create a new model definition, sync it to the database.
-2) Create controller rules to allow you to do CRUD with your model
-3) Implement the view logic to support CRUD
-4) Add a view method to show a listing of all your objects
+* Create a test suite for a new model and its views that implement CRUD
+* Create a new model definition, sync it to the database.
+* Create controller rules to allow you to do CRUD with your model
+* Implement the view logic to support CRUD
+* Add a view method to show a listing of all your objects
 
 and for bonus points
 
-5) Create a controller rule and view method that will delete all 
+* Create a tests and a controller rule and view method that will delete all 
 of your objects.
-````````````````
 
