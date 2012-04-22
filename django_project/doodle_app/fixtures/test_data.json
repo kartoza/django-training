@@ -1,0 +1,29 @@
+[
+    {
+        "pk": 1, 
+        "model": "doodle_app.doodle", 
+        "fields": {
+            "doodle_type": 1, 
+            "name": "Doodel 1", 
+            "doodle_date": "2012-04-21T12:38:31.789Z"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "doodle_app.doodle", 
+        "fields": {
+            "doodle_type": 2, 
+            "name": "Doodle 2", 
+            "doodle_date": "2012-04-21T12:38:38.894Z"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "doodle_app.doodle", 
+        "fields": {
+            "doodle_type": 2, 
+            "name": "Doodle 3", 
+            "doodle_date": "2012-04-21T12:38:49.862Z"
+        }
+    }
+]

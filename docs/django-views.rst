@@ -511,13 +511,17 @@ or deal with the error gracefully.
 First lets make a test::
    
     def testInvalidShowDoodleTypeView(self):
-        """Test show single doodle type view works.."""
-        myRequest = self.factory.get('/doodle/showDoodleType/999/')
-        myResponse = showDoodleType(myRequest, 999)
-        self.assertEqual(myResponse.status_code, 404)
+        """Test show invalid single doodle type view returns 404"""
+        try:
+            myRequest = self.factory.get('/doodle/showDoodleType/999/')
+            showDoodleType(myRequest, 999)
+        except Http404:
+            pass
+        except:
+            assert()
 
     def testInvalidShowDoodleTypeUrl(self):
-        """Test show single doodle type url works.
+        """Test show single invlalid doodle type url returns 404.
         """
         myClient = Client()
         myResponse = myClient.get('/doodle/showDoodleType/999/')
@@ -529,6 +533,12 @@ Both tests will raise a :keyword:`DoesNotExist` error::
 
 You can use normal python error checking to deal with this, but django provides
 a shortcut to deal with these situations in its aptly named shortcuts module.
+
+Before we write our code, lets create :file:`doodle_app/templates/404.html`
+which will contain whatever test we wish to return when there is a 404 error::
+   
+   Page not Found
+
 Lets adapt our showDoodleType view to be a little more robust::
    
    from django.shortcuts import get_object_or_404
@@ -580,7 +590,14 @@ result::
    Name: Test
 
 
-== Creating a model ==
+Creating a model instance
+-------------------------
+
+You can also use this url based approach to create a new instance - though
+in practice we would normally use an html form to do it. Lets write a test
+first::
+   
+
 
 To your views.py add:
 
