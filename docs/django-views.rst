@@ -234,8 +234,8 @@ and then optionally you can create 'child' url files typically one per project.
 We already used :file:`urls.py` when we were setting up the admin interface. 
 
 So let's set up our project :file:`urls.py` to redirect to our
-:keyword:`doodle_app` project file for doodle based urls. This will create
-a url schema like this::
+:keyword:`doodle_app` project's :file:`urls.py` file for doodle based urls.
+This will create a url scheme like this::
    
    http://<domain name>:<port>/<app name>/<location>
 
@@ -610,6 +610,7 @@ And to the :file:`urls.py` add::
 
 Then try  http://localhost:8000/doodle/deleteDoodleType/1/ which should produce
 result::
+   
    Doodle Type Deleted:
    Id: 1
    Name: Test
@@ -678,7 +679,7 @@ Last but not least, update a model
 ----------------------------------
 
 You can use your views to update models too. First a test::
-...........................................................
+   
    def testUpdateDoodleTypeView(self):
        """Test update single doodle type view works."""
        myRequest = self.factory.get('/doodle/updateDoodleType/SuperDoodle/')
@@ -690,7 +691,7 @@ You can use your views to update models too. First a test::
                     ' - got %s, expected %s' %
                     (myResponse.content, myExpectedString))
        self.assertEqual(myResponse.content, myExpectedString, myMessage)
-
+   
     def testUpdateDoodleTypesUrl(self):
        """Test update doodle type using a url.
        """
@@ -737,11 +738,10 @@ CRUD!
 
 Now we have crud facilities in our application!:
 
-- **c**reate objects
-- **r**ead objects
-- **u**pdate objects
-- **d**elete objects
--
+- Create objects
+- Read objects
+- Update objects
+- Delete objects
 
 CRUD is the basis for pretty much any data driven application so we are well on
 our way to being able to create something useful.
@@ -761,5 +761,5 @@ challenge:
 and for bonus points
 
 * Create a tests and a controller rule and view method that will delete all 
-of your objects.
+  of your objects.
 

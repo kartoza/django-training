@@ -42,13 +42,6 @@ The model creation consists of four steps:
 Lets look again at the model definition we created earlier, but with some extra
 comments::
    
-   # Our base class
-   from django.db import models
-   # import GeoDjango stuff to support spatial data types
-   from django.contrib.gis.db import models
-   # Use python time goodies
-   import datetime 
-   
    class Doodle(models.Model):
        """A class defines our model if it inherits from models.model"""
        name = models.CharField(max_length=255)
