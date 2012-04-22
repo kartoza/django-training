@@ -121,7 +121,7 @@ pattern here. We have a model (:keyword:`Doodle`), we have a view
 (`django docs <https://docs.djangoproject.com/en/dev/topics/http/urls/>`_).
 The idea is to make our view available at the url:
 
-   http://localhost:8000/helloWorld/.
+   http://localhost:8000/doodle/helloWorld/.
 
 Controller Test
 ---------------
@@ -364,8 +364,8 @@ any sequence of upper or lower case characters, assign that character sequence
 to a variable called "thePerson" and pass it on to the helloPerson view.
 
 Make sense? It will make more sense as you get a bit more experience with
-django. Lets test out our new view at http://localhost:8000/hello/Tim/ which 
-should show this::
+django. Lets test out our new view at http://localhost:8000/doodle/hello/Tim/
+which should show this::
    
    Hello Tim
 
@@ -435,8 +435,9 @@ get to your views. So to make our new controller rule, we add a line in
    (r'^listDoodleTypes/', 'listDoodleTypes'),
 
 
-Now point your browser at the new view: http://localhost:8000/doodle/listDoodleTypes/
-and you should see something like this::
+Now point your browser at the new view: 
+http://localhost:8000/doodle/listDoodleTypes/ and you should see something like
+this::
    
    doodle types
    
@@ -503,8 +504,8 @@ Dealing with errors
 -------------------
 
 One common error you may encounter is a url asking for a non existant object
-e.g. http://localhost:8000/showDoodleType/999/ ? Using get on a non existing
-object will raise an error - which in production mode will return a 500
+e.g. http://localhost:8000/doodle/showDoodleType/999/ ? Using get on a non-
+existing object will raise an error - which in production mode will return a 500
 response to the user. It would be far better to return 404 (page not found),
 or deal with the error gracefully.
 
@@ -583,7 +584,7 @@ And to the urls.py add::
    
    (r'^deleteDoodleType/(?P<theId>\d+)/$', deleteDoodleType),
 
-Then try  http://localhost:8000/deleteDoodleType/1/ which should produce
+Then try  http://localhost:8000/doodle/deleteDoodleType/1/ which should produce
 result::
    Doodle Type Deleted:
    Id: 1
@@ -597,41 +598,57 @@ You can also use this url based approach to create a new instance - though
 in practice we would normally use an html form to do it. Lets write a test
 first::
    
+    def testCreateDoodleTypeView(self):
+        """Test create single doodle type view works."""
+        myRequest = self.factory.get('/doodle/createDoodleType/SuperDoodle/')
+        myResponse = createDoodleType(myRequest, 'SuperDoodle')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+                            'Name: SuperDoodle<br />')
+        myMessage = ('Unexpected response from hello'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testCreateDoodleTypesUrl(self):
+        """Test create doodle type using a url.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/createDoodleType/SuperDoodle/')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+                            'Name: SuperDoodle<br />')
+        myMessage = ('Unexpected response from helloWorld URL'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
 
 
-To your views.py add:
+The code for creating an instance should look familiar. To your views.py add::
+   
+   def createDoodleType(theRequest, theName):
+       """Create a doodle type given a name"""
+       myObject = DoodleType()
+       myObject.name = theName
+       myObject.save()
+       myResult = "<h1>Doodle Type Created:</h1>"
+       myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+       myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+       return HttpResponse(myResult)
 
-```
-def createDoodleType(theRequest, theName):
-  myObject = DoodleType()
-  myObject.name = theName
-  myObject.save()
-  myResult = "<h1>Doodle Type Created:</h1>"
-  myResult = myResult + "Id: " + str(myObject.id) + "<br />"
-  myResult = myResult + "Name: " + str(myObject.name) + "<br />"
-return HttpResponse(myResult)
-`````````````````````````````
 
-And to the urls.py add:
+And to the urls.py add::
+   
+   (r'^createDoodleType/(?P<theName>[a-zA-Z]+)/$', createDoodleType),
 
-```
-# For our delete doodle type view
-(r'^createDoodleType/(?P<theName>[a-zA-Z]+)/$', createDoodleType),
-``````````````````````````````````````````````````````````````````
 
-Then test:
+Then test using e.g. http://localhost:8000/doodle/createDoodleType/Squiggle/
+which should produce::
+   
+   Doodle Type Created:
+   Id: 2
+   Name: Squiggle
 
-````````````````````````````````````````````````
-http://localhost:8000/createDoodleType/Squiggle/
-````````````````````````````````````````````````
-
-Result:
-
-```
-Doodle Type Created:
-Id: 2
-Name: Squiggle
-``````````````
 
 == Last but not least, update a model ==
 
@@ -661,9 +678,9 @@ first the id, and then the new name for the doodle.
 
 Then test:
 
-``````````````````````````````````````````````````
-http://localhost:8000/updateDoodleType/2/Squaggle/
-``````````````````````````````````````````````````
+`````````````````````````````````````````````````````````
+http://localhost:8000/doodle/updateDoodleType/2/Squaggle/
+`````````````````````````````````````````````````````````
 
 Result:
 

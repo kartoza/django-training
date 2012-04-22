@@ -5,6 +5,7 @@ from django.test.client import RequestFactory
 from views import helloWorld
 from views import hello
 from views import showDoodleType
+from views import createDoodleType
 from django.test.client import Client
 from django.http import Http404
 
@@ -146,3 +147,28 @@ class TestViews(TestCase):
         myClient = Client()
         myResponse = myClient.get('/doodle/showDoodleType/999/')
         self.assertEqual(myResponse.status_code, 404)
+
+    def testCreateDoodleTypeView(self):
+        """Test create single doodle type view works."""
+        myRequest = self.factory.get('/doodle/createDoodleType/SuperDoodle/')
+        myResponse = createDoodleType(myRequest, 'SuperDoodle')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+                            'Name: SuperDoodle<br />')
+        myMessage = ('Unexpected response from hello'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)
+
+    def testCreateDoodleTypesUrl(self):
+        """Test create doodle type using a url.
+        """
+        myClient = Client()
+        myResponse = myClient.get('/doodle/createDoodleType/SuperDoodle/')
+        self.assertEqual(myResponse.status_code, 200)
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+                            'Name: SuperDoodle<br />')
+        myMessage = ('Unexpected response from helloWorld URL'
+                     ' - got %s, expected %s' %
+                     (myResponse.content, myExpectedString))
+        self.assertEqual(myResponse.content, myExpectedString, myMessage)

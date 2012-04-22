@@ -5,4 +5,5 @@ urlpatterns = patterns('doodle_app.views',
     (r'hello/(?P<thePerson>[a-zA-Z]+)/$', 'hello'),
     (r'listDoodleTypes/$', 'listDoodleTypes'),
     (r'^showDoodleType/(?P<theId>\d+)/$', 'showDoodleType'),
+    (r'^createDoodleType/(?P<theName>[a-zA-Z]+)/$', 'createDoodleType'),
 )

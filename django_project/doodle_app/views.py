@@ -45,3 +45,14 @@ def deleteDoodleType(theRequest, theId):
     except Exception, e:
         myResult = '<b>Error:</b>' + str(e)
     return HttpResponse(myResult)
+
+
+def createDoodleType(theRequest, theName):
+    """Create a doodle type given a name"""
+    myObject = DoodleType()
+    myObject.name = theName
+    myObject.save()
+    myResult = "<h1>Doodle Type Created:</h1>"
+    myResult = myResult + "Id: " + str(myObject.id) + "<br />"
+    myResult = myResult + "Name: " + str(myObject.name) + "<br />"
+    return HttpResponse(myResult)
