@@ -1,2 +1,4 @@
-_build
+python
+docs/_build
 *.*~
+*.pyc

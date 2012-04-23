@@ -28,7 +28,7 @@ our Doodle model there::
            myDoodle.name = 'Test Doodle'
            myDoodle.save()
            for myDoodle in Doodle.objects.all():
-           print myDoodle.name
+               print myDoodle.name
            myMessage = 'Expected one more doodle after creation'
            assert Doodle.objects.all().count() > myCount, myMessage
 

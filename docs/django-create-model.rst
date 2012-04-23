@@ -2,7 +2,7 @@ Create a model
 ==============
 
 Now the fun starts. Django has a easy, intuitive and powerful way to define
-models. Each model is a python class. Edit :file:`doodle_aoo/models.py` and add::
+models. Each model is a python class. Edit :file:`doodle_app/models.py` and add::
 
    from django.db import models
    import datetime

@@ -1,29 +1,146 @@
 [
     {
-        "pk": 22, 
+        "pk": 9, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "doodle", 
+            "name": "Doodle", 
+            "app_label": "doodle_app"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "doodletype", 
+            "name": "Doodle Type", 
+            "app_label": "doodle_app"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "contenttype", 
+            "name": "content type", 
+            "app_label": "contenttypes"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "group", 
+            "name": "group", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "logentry", 
+            "name": "log entry", 
+            "app_label": "admin"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "permission", 
+            "name": "permission", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "session", 
+            "name": "session", 
+            "app_label": "sessions"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "site", 
+            "name": "site", 
+            "app_label": "sites"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "user", 
+            "name": "user", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "example.com", 
+            "name": "example.com"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "doodle_app.doodletype", 
+        "fields": {
+            "name": "Big"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "doodle_app.doodletype", 
+        "fields": {
+            "name": "Medium"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "doodle_app.doodletype", 
+        "fields": {
+            "name": "Small"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "doodle_app.doodletype", 
+        "fields": {
+            "name": "Squiggle"
+        }
+    }, 
+    {
+        "pk": 19, 
         "model": "auth.permission", 
         "fields": {
             "codename": "add_logentry", 
             "name": "Can add log entry", 
-            "content_type": 8
+            "content_type": 7
         }
     }, 
     {
-        "pk": 23, 
+        "pk": 20, 
         "model": "auth.permission", 
         "fields": {
             "codename": "change_logentry", 
             "name": "Can change log entry", 
-            "content_type": 8
+            "content_type": 7
         }
     }, 
     {
-        "pk": 24, 
+        "pk": 21, 
         "model": "auth.permission", 
         "fields": {
             "codename": "delete_logentry", 
             "name": "Can delete log entry", 
-            "content_type": 8
+            "content_type": 7
         }
     }, 
     {
@@ -135,38 +252,20 @@
         }
     }, 
     {
-        "pk": 19, 
+        "pk": 22, 
         "model": "auth.permission", 
         "fields": {
             "codename": "add_doodle", 
             "name": "Can add Doodle", 
-            "content_type": 7
+            "content_type": 9
         }
     }, 
     {
-        "pk": 20, 
+        "pk": 24, 
         "model": "auth.permission", 
         "fields": {
             "codename": "change_doodle", 
             "name": "Can change Doodle", 
-            "content_type": 7
-        }
-    }, 
-    {
-        "pk": 21, 
-        "model": "auth.permission", 
-        "fields": {
-            "codename": "delete_doodle", 
-            "name": "Can delete Doodle", 
-            "content_type": 7
-        }
-    }, 
-    {
-        "pk": 25, 
-        "model": "auth.permission", 
-        "fields": {
-            "codename": "add_doodletype", 
-            "name": "Can add Doodle Type", 
             "content_type": 9
         }
     }, 
@@ -174,9 +273,27 @@
         "pk": 26, 
         "model": "auth.permission", 
         "fields": {
+            "codename": "delete_doodle", 
+            "name": "Can delete Doodle", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_doodletype", 
+            "name": "Can add Doodle Type", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "auth.permission", 
+        "fields": {
             "codename": "change_doodletype", 
             "name": "Can change Doodle Type", 
-            "content_type": 9
+            "content_type": 8
         }
     }, 
     {
@@ -185,7 +302,7 @@
         "fields": {
             "codename": "delete_doodletype", 
             "name": "Can delete Doodle Type", 
-            "content_type": 9
+            "content_type": 8
         }
     }, 
     {
@@ -240,45 +357,6 @@
             "codename": "delete_site", 
             "name": "Can delete site", 
             "content_type": 6
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "auth.user", 
-        "fields": {
-            "username": "timlinux", 
-            "first_name": "", 
-            "last_name": "", 
-            "is_active": true, 
-            "is_superuser": true, 
-            "is_staff": true, 
-            "last_login": "2012-04-20T14:27:08.987Z", 
-            "groups": [], 
-            "user_permissions": [], 
-            "password": "pbkdf2_sha256$10000$VDuFNmuZhi4N$4Ie4z2nDCvPDOsyhw0np0Caph6Y6GbUa0aFvSmr9eG0=", 
-            "email": "tim@linfiniti.com", 
-            "date_joined": "2012-04-20T09:49:32.344Z"
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "doodle_app.doodletype", 
-        "fields": {
-            "name": "Big"
-        }
-    }, 
-    {
-        "pk": 2, 
-        "model": "doodle_app.doodletype", 
-        "fields": {
-            "name": "Medium"
-        }
-    }, 
-    {
-        "pk": 3, 
-        "model": "doodle_app.doodletype", 
-        "fields": {
-            "name": "Small"
         }
     }
 ]
