@@ -102,7 +102,8 @@ class TestViews(TestCase):
         myResponse = myClient.get('/doodle/listDoodleTypes/')
         self.assertEqual(myResponse.status_code, 200)
         myExpectedString = ('<h1>doodle types</h1>1 : Big<br />'
-                            '2 : Medium<br />3 : Small<br />')
+                            '2 : Medium<br />3 : Small<br />'
+                            '4 : Squiggle<br />')
         myMessage = ('Unexpected response from helloWorld URL'
                      ' - got %s, expected %s' %
                      (myResponse.content, myExpectedString))
@@ -180,7 +181,7 @@ class TestViews(TestCase):
         myRequest = self.factory.get('/doodle/createDoodleType/SuperDoodle/')
         myResponse = createDoodleType(myRequest, 'SuperDoodle')
         self.assertEqual(myResponse.status_code, 200)
-        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 5<br />'
                             'Name: SuperDoodle<br />')
         myMessage = ('Unexpected response from hello'
                      ' - got %s, expected %s' %
@@ -193,7 +194,7 @@ class TestViews(TestCase):
         myClient = Client()
         myResponse = myClient.get('/doodle/createDoodleType/SuperDoodle/')
         self.assertEqual(myResponse.status_code, 200)
-        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 4<br />'
+        myExpectedString = ('<h1>Doodle Type Created:</h1>Id: 5<br />'
                             'Name: SuperDoodle<br />')
         myMessage = ('Unexpected response from helloWorld URL'
                      ' - got %s, expected %s' %

@@ -12,4 +12,3 @@ class DoodleAdmin(admin.ModelAdmin):
 #Register each model with its associated admin class
 admin.site.register(DoodleType, DoodleTypeAdmin)
 admin.site.register(Doodle, DoodleAdmin)
-
