@@ -145,7 +145,7 @@ class TestViews(TestCase):
             assert()
 
     def testInvalidShowDoodleTypeUrl(self):
-        """Test show single invlalid doodle type url returns 404.
+        """Test show single invalid doodle type url returns 404.
         """
         myClient = Client()
         myResponse = myClient.get('/doodle/showDoodleType/999/')
@@ -203,7 +203,7 @@ class TestViews(TestCase):
 
     def testUpdateDoodleTypeView(self):
         """Test update single doodle type view works."""
-        myRequest = self.factory.get('/doodle/updateDoodleType/SuperDoodle/')
+        myRequest = self.factory.get('/doodle/updateDoodleType/1/Foobar/')
         myResponse = updateDoodleType(myRequest, 1, 'Foobar')
         self.assertEqual(myResponse.status_code, 200)
         myExpectedString = ('<h1>Doodle Type Updated:</h1>Id: 1<br />Name: '

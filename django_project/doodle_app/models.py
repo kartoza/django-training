@@ -17,7 +17,8 @@ class DoodleType(models.Model):
 
 class Doodle(models.Model):
     name = models.CharField(max_length=255)
-    doodle_type = models.ForeignKey(DoodleType)
+    doodle_type = models.ForeignKey(DoodleType,
+                                    default=DoodleType.objects.get(id=1))
     doodle_date = models.DateTimeField('DateAdded',
            auto_now=True, auto_now_add=False)
 
@@ -25,3 +26,7 @@ class Doodle(models.Model):
         verbose_name = ('Doodle')
         verbose_name_plural = ('Doodles')
         ordering = ('doodle_date',)
+
+    def evaporate(self):
+        """Make a doodle disaappear"""
+        return "I am %s, I am disappear.......ing" % self.name

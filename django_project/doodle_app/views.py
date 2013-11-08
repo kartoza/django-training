@@ -1,11 +1,25 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import (get_object_or_404,
+                              render_to_response)
 from models import DoodleType
+from models import Doodle
+from forms import DoodleForm
+from django.template import RequestContext
 
 
 def helloWorld(theRequest):
     """A simple hello world view"""
-    return HttpResponse('<h1>Hello World</h1>')
+    if theRequest.user.username == 'timlinux':
+        return HttpResponse('Dude you are awesome!')
+    else:
+        return HttpResponse('<h1>Hello World</h1>')
+
+
+def menu(theRequest):
+    """Create menu"""
+    myMenu = '<h1>Menu</h1>'
+    myMenu += '<a href="/doodle/listDoodleTypes/">List Doodle Types</a>'
+    return HttpResponse(myMenu)
 
 
 def hello(theRequest, thePerson):
@@ -15,14 +29,18 @@ def hello(theRequest, thePerson):
 
 def listDoodleTypes(theRequest):
     """A view to show all doodle types"""
-    myObjects = DoodleType.objects.all()
-    # Optional - sort descending:
-    #myObjects = DoodleType.objects.all().order_by("-name")
-    myResult = "<h1>doodle types</h1>"
-    for myObject in myObjects:
-        myResult = (myResult + str(myObject.id) +
-                   ' : ' + str(myObject.name) + '<br />')
-    return HttpResponse(myResult)
+    myObjects = DoodleType.objects.all().order_by("-name")
+    myDoodle = Doodle.objects.get(id=1)
+    return render_to_response('doodleTypesList.html',
+                              {'myObjects': myObjects,
+                               'myDoodle': myDoodle})
+
+
+def listDoodles(theRequest):
+    """A view to show all doodle types"""
+    myObjects = Doodle.objects.all().order_by("-name")
+    return render_to_response('doodleList.html',
+                              {'myObjects': myObjects})
 
 
 def showDoodleType(theRequest, theId):
@@ -66,3 +84,34 @@ def updateDoodleType(theRequest, theId, theName):
     myResult = myResult + "Id: " + str(myObject.id) + "<br />"
     myResult = myResult + "Name: " + str(myObject.name) + "<br />"
     return HttpResponse(myResult)
+
+
+def doodleForm(theRequest, theId=None):
+    myForm = None
+    myObject = None
+    if theId:
+        myObject = get_object_or_404(Doodle, id=theId)
+    if theRequest.method == 'POST':
+        if myObject:
+            myForm = DoodleForm(theRequest.POST, instance=myObject)  # editing
+        else:
+            myForm = DoodleForm(theRequest.POST)  # submit new
+        if myForm.is_valid():
+            myObject = myForm.save()
+            return render_to_response("doodleForm.html",
+                                      {"myDoodle": myObject})
+    else:
+        if theId:
+            myForm = DoodleForm(instance=myObject)
+        else:
+            myForm = DoodleForm()
+
+    return render_to_response(
+      "doodleForm.html",
+      {
+        "myForm": myForm,
+        "myObjectId": theId,
+      },
+      context_instance=RequestContext(theRequest),
+      mimetype='text/html'
+    )
