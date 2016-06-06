@@ -29,11 +29,12 @@ def handler500(request):
         'request': request,
     })))
 
-urlpatterns = []
-# These patterns work if there is a locale code injected in front of them
-# e.g. /en/reports/
-urlpatterns += i18n_patterns(
-    url(r'^/', include('feature_selection_app.urls')),
+urlpatterns = patterns(
+    '',
+    # Enable the admin:
+    url(r'^demo-admin/', include(admin.site.urls)),
+    url(r'^', include('demo_app.urls', namespace='demo_app')),
+    url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:

@@ -1,9 +1,9 @@
-.. Linfiniti Django Training Manual documentation master file, created by
-   sphinx-quickstart on Fri Apr 20 08:50:06 2012.
+.. Kartoza Django Training Manual documentation master file, created by
+   sphinx-quickstart June 2016.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Linfiniti Django Training Manual's documentation!
+Welcome to Kartoza Django Training Manual's documentation!
 ============================================================
 
 Contents:
@@ -21,6 +21,7 @@ Contents:
    django-models-in-depth
    setup-eclipse
    django-views
+   django-class-based-views
 
 
 Indices and tables

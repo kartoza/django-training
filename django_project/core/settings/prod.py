@@ -27,9 +27,9 @@ USE_X_FORWARDED_HOST = True
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
-SERVER_EMAIL = 'Christian@kartoza.com'
+SERVER_EMAIL = 'christian@kartoza.com'
 EMAIL_HOST = 'kartoza.com'
-DEFAULT_FROM_EMAIL = 'Christian@kartoza.com'
+DEFAULT_FROM_EMAIL = 'christian@kartoza.com'
 
 # # Logging
 # if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
@@ -55,7 +55,7 @@ DEFAULT_FROM_EMAIL = 'Christian@kartoza.com'
 #         # see http://raven.readthedocs.org/en/latest/integrations/  ...
 #         # ... django.html#message-references
 #         # This will add a client unique id in messages
-#         'raven.contrib.django.raven_compat.middleware.'
+    #         'raven.contrib.django.raven_compat.middleware.'
 #         'SentryResponseErrorIdMiddleware',
 #     ) + MIDDLEWARE_CLASSES
 #

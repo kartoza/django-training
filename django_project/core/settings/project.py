@@ -13,7 +13,7 @@ from .contrib import *  # noqa
 
 # Project apps
 INSTALLED_APPS += (
-    'feature_selection_app',
+    'demo_app',
 )
 
 # Due to profile page does not available,

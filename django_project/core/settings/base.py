@@ -2,7 +2,7 @@
 """
 core.settings.base
 """
-# Django settings for projecta project.
+# Django settings for training project.
 
 from .utils import absolute_path
 
@@ -82,9 +82,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             # project level templates
-            absolute_path('core', 'base_templates'),
-            absolute_path('vota', 'templates'),
-            absolute_path('changes', 'templates'),
+            absolute_path('core', 'templates'),
+            absolute_path('demo_app', 'templates'),
         ],
         'APP_DIRS': False,
         'OPTIONS': {

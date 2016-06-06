@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load leaflet_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+{% leaflet_js plugins="forms" %}
+{% leaflet_css plugins="forms" %}
+</head>
+<body>
+    <br/>
+    <form id="form" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button id="save_button_id" type="submit" class="btn">Save</button>
+    </form>
+</body>
+</html>

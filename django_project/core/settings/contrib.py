@@ -44,7 +44,20 @@ THUMBNAIL_ALIASES = {
 # Pipeline related settings
 
 INSTALLED_APPS += (
-    'pipeline',)
+    # 'pipeline',
+    'django.contrib.gis',
+    'leaflet',
+    'rest_framework',
+    'rest_framework_gis',
+)
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (-33.9321, 18.8602),
+    'DEFAULT_ZOOM': 8,
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 18,
+}
+
 #
 # MIDDLEWARE_CLASSES += (
 #     # For rosetta localisation

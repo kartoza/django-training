@@ -3,7 +3,7 @@
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os
-print os.environ
+print(os.environ)
 
 DEBUG = False
 
@@ -39,4 +39,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'noreply@kartoza.com'
 EMAIL_HOST_PASSWORD = 'docker'
 EMAIL_USE_TLS = False
-EMAIL_SUBJECT_PREFIX = '[PROJECTA]'
+EMAIL_SUBJECT_PREFIX = '[TRAINING]'
+
+# DEBUG=True
+# TEMPLATES[0]['OPTIONS']['debug'] = True
