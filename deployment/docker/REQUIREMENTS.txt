@@ -12,3 +12,5 @@ django-leaflet
 django-allauth==0.25.2
 djangorestframework>=3.2
 djangorestframework-gis
+nose
+django-nose

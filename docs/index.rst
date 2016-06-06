@@ -22,6 +22,7 @@ Contents:
    setup-eclipse
    django-views
    django-class-based-views
+   django-middleware
 
 
 Indices and tables

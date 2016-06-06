@@ -49,6 +49,7 @@ INSTALLED_APPS += (
     'leaflet',
     'rest_framework',
     'rest_framework_gis',
+    'django_nose',
 )
 
 LEAFLET_CONFIG = {
@@ -109,3 +110,5 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_SIGNUP_FORM_CLASS = 'base.forms.SignupForm'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
