@@ -39,6 +39,12 @@ db:
     - USERNAME=docker
     - PASS=docker
 
+elasticsearch:
+  image: elasticsearch
+  hostname: elasticsearch
+  environment:
+    - HAYSTACK_PORT=9200
+
 uwsgi:
   # Note you cannot scale if you use conteiner_name
   container_name: django-training-uwsgi
@@ -52,6 +58,7 @@ uwsgi:
     - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
     - VIRTUAL_HOST=django-training.kartoza.com
     - VIRTUAL_PORT=8080
+    - HAYSTACK_HOST=elasticsearch
   volumes:
     - ../django_project:/home/web/django_project
     - ./static:/home/web/static:rw
@@ -61,7 +68,7 @@ uwsgi:
   links:
     - smtp:smtp
     - db:db
-  user: root
+    - elasticsearch:elasticsearch
 
 dbbackups:
   # Note you cannot scale if you use conteiner_name
@@ -130,6 +137,6 @@ devweb:
     - db:db
   ports:
     # for django test server
-    - "61202:8080"
+    - "880:8080"
     # for ssh
-    - "61203:22"
+    - "2222:22"

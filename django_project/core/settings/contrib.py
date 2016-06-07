@@ -50,6 +50,7 @@ INSTALLED_APPS += (
     'rest_framework',
     'rest_framework_gis',
     'django_nose',
+    'haystack',
 )
 
 LEAFLET_CONFIG = {
@@ -112,3 +113,6 @@ ACCOUNT_SIGNUP_FORM_CLASS = 'base.forms.SignupForm'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+HAYSTACK_DEFAULT_OPERATOR = 'AND'
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
