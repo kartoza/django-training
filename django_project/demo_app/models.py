@@ -2,9 +2,6 @@
 from django.contrib.gis.db import models
 
 
-
-
-
 class ZoneType(models.Model):
     name = models.CharField(max_length=255)
     objects = models.Manager()
