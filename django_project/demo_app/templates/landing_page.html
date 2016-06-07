@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load leaflet_tags %}
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <script type="text/javascript">
+     /*jslint unparam: true*/
+    function style(feature) {
+        'use strict';
+        return {
+            weight: 1,
+            opacity: 1,
+            color: 'red',
+            fillOpacity: 0.1,
+            fillColor: 'red'
+        };
+    }
+
+    function map_init_basic (map, options) {
+        {% for zone in zones %}
+            var zone_boundary = JSON.parse('{{ zone.geometry.json | safe }}');
+            var layer = L.geoJson(zone_boundary, {
+                style: style,
+            }).addTo(map);
+            map.fitBounds(layer.getBounds());
+        {% endfor %}
+    }
+
+</script>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <h4>Zones of interest</h4>
+    {% leaflet_map "map" callback="window.map_init_basic" %}
+</body>
+</html>

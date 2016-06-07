@@ -1,0 +1,108 @@
+{% load thumbnail %}
+{% if not the_project %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                All Projects <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for project in the_projects %}
+                    <li>
+                        <a href="{% url 'project-detail' project.slug %}">
+                            {{ project.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url 'project-create' %}">Create Project</a>
+        </li>
+    </ul>
+{% else %}
+    <ul class="nav navbar-nav">
+        {% if the_project.image_file %}
+            <li><img class="img-rounded"
+                     src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
+        {% endif %}
+        <li>
+            <a class="nav navbar-nav" >
+                {{ the_project.name }}
+            </a>
+
+        </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url "version-create" the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
+                Changelogs <b class="caret"></b>
+            </a>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'category-list' the_project.slug %}">Manage Categories</a></li>
+                <li><a href="{% url 'version-list' the_project.slug %}">Manage Versions</a></li>
+            </ul>
+    </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Sponsors <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'sponsor-list' the_project.slug %}">Manage Sponsors</a></li>
+                <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Manage Levels</a></li>
+                <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Manage Periods</a></li>
+            </ul>
+    </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url 'committee-list' the_project.slug %}">
+                Committees
+            </a>
+    </li>
+    </ul>
+
+{% endif %}
+{% if the_committee and the_project %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
+                Committee Ballots
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'ballot-create' the_project.slug the_committee.slug %}">
+                Start Ballot
+            </a>
+        </li>
+    </ul>
+{% endif %}
+{% if the_version and the_project %}
+    <ul class="nav navbar-nav">
+        <li>
+            {% if not as_thumbs %}
+                <a href="{% url 'version-thumbs' the_project.slug the_version.slug %}">
+                    Version Thumbnails
+                </a>
+            {% else %}
+                <a href="{% url 'version-detail' the_project.slug the_version.slug %}">
+                    Version as List
+                </a>
+            {% endif %}
+        </li>
+        <li>
+            <a href="{% url 'entry-list' the_project.slug the_version.slug %}">
+                Version Entries
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'entry-create' the_project.slug the_version.slug %}">
+                Add Entry
+            </a>
+        </li>
+    </ul>
+{% endif %}

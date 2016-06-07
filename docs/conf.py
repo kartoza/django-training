@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Linfiniti Django Training Manual documentation build configuration file, created by
+# Kartoza Django Training Manual documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr 20 08:50:06 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Linfiniti Django Training Manual'
+project = u'Kartoza Django Training Manual'
 copyright = u'2012, Tim Sutton'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -91,7 +91,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'linfiniti-sphinx-theme'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'LinfinitiDjangoTrainingManualdoc'
+htmlhelp_basename = 'KartozaDjangoTrainingManualdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'LinfinitiDjangoTrainingManual.tex', u'Linfiniti Django Training Manual Documentation',
+  ('index', 'KartozaDjangoTrainingManual.tex', u'Kartoza Django Training Manual Documentation',
    u'Tim Sutton', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'linfinitidjangotrainingmanual', u'Linfiniti Django Training Manual Documentation',
+    ('index', 'kartozadjangotrainingmanual', u'Kartoza Django Training Manual Documentation',
      [u'Tim Sutton'], 1)
 ]
 
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'LinfinitiDjangoTrainingManual', u'Linfiniti Django Training Manual Documentation',
-   u'Tim Sutton', 'LinfinitiDjangoTrainingManual', 'One line description of project.',
+  ('index', 'KartozaDjangoTrainingManual', u'Kartoza Django Training Manual Documentation',
+   u'Tim Sutton', 'KartozaDjangoTrainingManual', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -245,10 +245,10 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'Linfiniti Django Training Manual'
+epub_title = u'Kartoza Django Training Manual'
 epub_author = u'Tim Sutton'
 epub_publisher = u'Tim Sutton'
-epub_copyright = u'2012, Tim Sutton'
+epub_copyright = u'2016, Tim Sutton'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
