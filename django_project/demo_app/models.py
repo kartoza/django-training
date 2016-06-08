@@ -26,5 +26,5 @@ class InterestZone(models.Model):
     class Meta:
         verbose_name = ('Interest Zone')
         verbose_name_plural = ('Interest Zones')
-        ordering = ('acquisition_date',)
+        ordering = ('acquisition_date', 'name')
 

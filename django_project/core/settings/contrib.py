@@ -9,12 +9,6 @@ from .base import *  # noqa
 #     'grappelli',
 # ) + INSTALLED_APPS
 
-# INSTALLED_APPS += (
-#     'crispy_forms',
-#     'widget_tweaks',  # lets us add some bootstrap css to form elements
-#     'rosetta',
-# )
-
 # Set disqus and shortname
 # noinspection PyUnresolvedReferences
 from .secret import DISQUS_WEBSITE_SHORTNAME  # noqa
@@ -50,7 +44,7 @@ INSTALLED_APPS += (
     'rest_framework',
     'rest_framework_gis',
     'django_nose',
-    'haystack',
+    # 'haystack',
 )
 
 LEAFLET_CONFIG = {

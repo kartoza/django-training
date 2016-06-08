@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <h4>You came here using a {{ request_type }}</h4>
+    <form method="post">{% csrf_token %}<button type="submit">Let's POST</button></form>
+    <form method="get"><button type="submit">Let's GET</button></form>
+</body>
+</html>

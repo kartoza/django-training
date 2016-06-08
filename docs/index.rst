@@ -17,12 +17,21 @@ Contents:
    django-create-model
    django-fixtures
    django-testing
-   django-admin-model
-   django-models-in-depth
    setup-eclipse
    django-views
    django-class-based-views
    django-middleware
+
+REHASH
+======
+
+.. toctree::
+   :maxdepth: 2
+
+   django-rehash-models
+   django-rehash-admin
+   django-rehash-full-view
+
 
 
 Indices and tables
