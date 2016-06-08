@@ -4,12 +4,12 @@ __date__ = '05/06/16'
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from django.views.generic import TemplateView, View, RedirectView
+from django.views.generic import TemplateView, View, RedirectView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.base import ContextMixin
+from django.views.generic.base import ContextMixin, TemplateResponseMixin
 from django.shortcuts import render_to_response
 
-from demo_app.models import InterestZone
+from demo_app.models import InterestZone, ZoneType
 from demo_app.forms import InterestZoneForm
 
 
@@ -49,11 +49,6 @@ class AllRequestTypes(View):
 
 class LandingPage(TemplateView):
     template_name = "landing_page.html"
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(LandingPage, self).get_context_data(**kwargs)
-    #     context['zones'] = InterestZone.objects.all()
-    #     return context
 
 
 class ToLandingPage(RedirectView):

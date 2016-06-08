@@ -1,8 +1,9 @@
 from django.conf.urls import patterns, url
 
 from demo_app.views import (
-    LandingPage, AddZoneView, AllRequestTypes, ToLandingPage
-    )
+    LandingPage, AddZoneView, AllRequestTypes,
+    ToLandingPage
+)
 
 from demo_app.api_views import zone_detail
 
