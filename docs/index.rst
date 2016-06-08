@@ -32,6 +32,7 @@ REHASH
     django-rehash-admin
     django-rehash-urls
     django-rehash-full-view
+    django-rehash-management-commands
 
 
 

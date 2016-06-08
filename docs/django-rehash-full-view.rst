@@ -1,8 +1,3 @@
-Full Views
-==========
-
-We are going through all possible views.
-
 View
 ====
 
