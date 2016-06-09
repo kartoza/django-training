@@ -53,7 +53,7 @@ class LandingPage(TemplateView):
 
 class ToLandingPage(RedirectView):
     def get_redirect_url(self):
-        return reverse('home', args=())
+        return reverse('demo_app:index')
 
 
 class EditZoneView(UpdateView):
