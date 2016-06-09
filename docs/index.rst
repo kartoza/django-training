@@ -26,6 +26,7 @@ REHASH
     django-rehash-urls
     django-rehash-full-view
     django-rehash-management-commands
+    django-rehash-templates
     django-rehash-api
 
 

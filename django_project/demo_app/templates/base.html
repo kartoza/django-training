@@ -1,0 +1,26 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock title %}</title>
+
+    {% block css %}
+    {% load static %}
+    {% endblock %}
+</head>
+<body>
+
+<div>
+
+    {% block navigation %}{% endblock %}
+    <br>
+    {% block contents %}{% endblock %}
+</div>
+
+{% block js %}
+{% endblock %}
+</body>
+</html>
