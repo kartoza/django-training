@@ -31,12 +31,12 @@ Now our model objects, once saved will land up in this database. Let's have a
 look at this in the django shell::
 
    >>> from demo_app.models import ZoneType
-   >>> zone_type.objects.all()  # You should get nothing back
+   >>> ZoneType.objects.all()  # You should get nothing back
    >>> zone_type = ZoneType()
    >>> zone_type.name = 'zone 1'
    >>> zone_type.save()
-   >>> zone_type.objects.all()  # Zone1 added
-   >>> zoen_type.objects.get(id=1) # Get only the first zone
+   >>> ZoneType.objects.all()  # Zone1 added
+   >>> ZoneType.objects.get(id=1) # Get only the first zone
 
 
 The django framework took care of deserialising the model from the database and

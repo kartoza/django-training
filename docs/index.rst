@@ -28,6 +28,10 @@ REHASH
     django-rehash-management-commands
     django-rehash-templates
     django-rehash-api
+    django-rehash-queries
+    django-rehash-swapping-users
+    django-rehash-testing
+
 
 
 Indices and tables
