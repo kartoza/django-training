@@ -6,3 +6,6 @@ docs/_build
 *.pot
 *.pyc
 local_settings.py
+.idea/
+.DS_Store
+venv

@@ -1,4 +1,4 @@
 django-training
 ===============
 
-Training couse materials for django
+Training course materials for django

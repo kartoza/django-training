@@ -8,7 +8,7 @@ your saved models into the database and deserialising the models again when you
 need to access them.
 
 
-Connecting The Datable
+Connecting The Database
 ----------------------
 
 The models we create need to persist. This is typically done in a database.
